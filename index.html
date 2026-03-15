@@ -358,6 +358,16 @@
   .type-online { background: #e8f0fe; color: #2563eb; }
   .type-onsite { background: var(--orange-light); color: var(--orange); }
 
+  /* ─── CERTIFICATE ──────────────────────────────── */
+  .cert-badge {
+    display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px;
+    background: linear-gradient(135deg, #fff8f0, #fff3ea); border: 1.5px solid var(--orange);
+    border-radius: 20px; font-size: 12px; font-weight: 700; color: var(--orange);
+    text-transform: uppercase; letter-spacing: .5px; cursor: pointer;
+    transition: all .15s;
+  }
+  .cert-badge:hover { background: var(--orange); color: var(--white); }
+
   @media (max-width: 900px) {
     .login-left { display: none; }
     .course-detail-layout { grid-template-columns: 1fr; }
@@ -448,7 +458,7 @@ function genCode() {
 }
 
 /* ─── SEED ─── */
-const DATA_VERSION = 'v3'; // bump this whenever seed data changes
+const DATA_VERSION = 'v4'; // bump this whenever seed data changes
 function seedData() {
   if (localStorage.getItem('lf_data_version') === DATA_VERSION) return;
   // clear all old keys so stale data never blocks new seed
@@ -818,10 +828,11 @@ function refreshStudentsTable() {
   document.getElementById('page-content').innerHTML = `<div class="card"><div class="table-wrap">
     ${students.length === 0 ? `<div class="empty-state"><span class="empty-icon">👥</span><h3>No students yet</h3><p>Add your first student above.</p></div>` : `
     <table>
-      <thead><tr><th>Name</th><th>Type</th><th>Email</th><th>Enrolled In</th><th>Exams</th><th>Actions</th></tr></thead>
+      <thead><tr><th>Name</th><th>Type</th><th>Email</th><th>Enrolled In</th><th>Exams</th><th>Certificate</th><th>Actions</th></tr></thead>
       <tbody>${students.map(s => {
         const sEnroll  = enrollments.filter(e => e.studentId === s.id);
         const sResults = results.filter(r => r.studentId === s.id);
+        const sCerts   = DB.get('certificates').filter(c => c.studentId === s.id);
         return `<tr>
           <td><div style="display:flex;align-items:center;gap:10px">
             <div class="sidebar-avatar" style="width:30px;height:30px;font-size:12px">${s.name.charAt(0)}</div>
@@ -834,6 +845,12 @@ function refreshStudentsTable() {
             return c ? `<span class="badge badge-gray" style="margin-right:4px">${c.title}</span>` : '';
           }).join('') : '<span class="text-gray text-sm">None</span>'}</td>
           <td>${sResults.length > 0 ? `<span class="badge badge-orange">${sResults.length} exam(s)</span>` : '<span class="text-gray text-sm">—</span>'}</td>
+          <td>${sCerts.length > 0
+            ? sCerts.map(cert => {
+                const c = courses.find(x => x.id === cert.courseId);
+                return `<button class="cert-badge" style="margin-bottom:3px;display:inline-flex" onclick="openCertificate('${s.id}','${cert.courseId}')">🎓 ${c ? c.title : 'View'}</button>`;
+              }).join('')
+            : '<span class="text-gray text-sm">—</span>'}</td>
           <td><div style="display:flex;gap:6px">
             <button class="btn btn-ghost btn-sm" onclick="openEnrollModal('${s.id}','${s.name}')">Enroll</button>
             <button class="btn btn-danger btn-sm" onclick="deleteStudent('${s.id}')">Remove</button>
@@ -1052,6 +1069,9 @@ function renderCourseDetail({ courseId }) {
               ${course.exam && pct === 100 && !result ? `<button class="btn btn-secondary w-full" style="margin-top:8px" onclick="navigate('exam-view',{courseId:'${courseId}'})">Take Exam →</button>` : ''}
               ${result ? `<div class="badge badge-green w-full" style="text-align:center;padding:10px;margin-top:8px;display:block">✓ Exam: ${result.score}%</div>` : ''}
               ${isOnsite ? `<button class="btn btn-outline w-full" style="margin-top:8px" onclick="navigate('check-in')">📋 Check In to Session</button>` : ''}
+              ${DB.get('certificates').find(c => c.studentId === currentUser.id && c.courseId === courseId)
+                ? `<button class="cert-badge w-full" style="margin-top:10px;justify-content:center" onclick="openCertificate('${currentUser.id}','${courseId}')">🎓 View Certificate</button>`
+                : ''}
             </div>
           </div>
         </div>
@@ -1444,13 +1464,14 @@ function submitCheckIn() {
   sessions[sIdx].attendees.push(currentUser.id);
   DB.set('sessions', sessions);
 
-  const course = DB.get('courses').find(c => c.id === session.courseId);
-  const att    = getStudentAttendance(currentUser.id, session.courseId);
+  const course    = DB.get('courses').find(c => c.id === session.courseId);
+  const att       = getStudentAttendance(currentUser.id, session.courseId);
+  const certIssued = maybeIssueCertificate(currentUser.id, session.courseId);
 
   document.getElementById('checkin-code').value = '';
   result.innerHTML = `<div class="card" style="border-color:#25a244;background:#e6f7ee;text-align:center">
-    <div style="font-size:40px">✅</div>
-    <div style="font-family:var(--font-display);font-size:28px;letter-spacing:.5px;margin-top:8px">Attendance Marked!</div>
+    <div style="font-size:40px">${certIssued ? '🏆' : '✅'}</div>
+    <div style="font-family:var(--font-display);font-size:28px;letter-spacing:.5px;margin-top:8px">${certIssued ? 'Attendance Marked + Certificate Earned!' : 'Attendance Marked!'}</div>
     <p style="color:var(--gray-600);font-size:14px;margin-top:6px"><strong>${session.label}</strong> · ${course ? course.title : ''}</p>
     <p style="color:var(--gray-600);font-size:14px">${formatDate(session.date)}</p>
     <div style="margin-top:16px;padding-top:16px;border-top:1px solid #b7e4c7">
@@ -1458,9 +1479,12 @@ function submitCheckIn() {
       <div style="font-family:var(--font-display);font-size:40px;color:#25a244">${att.pct}%</div>
       <div style="font-size:13px;color:var(--gray-600)">${att.attended} of ${att.total} sessions attended</div>
     </div>
+    ${certIssued ? `<div style="margin-top:16px">
+      <button class="cert-badge" onclick="openCertificate('${currentUser.id}','${session.courseId}')">🎓 View &amp; Print Certificate</button>
+    </div>` : ''}
     <button class="btn btn-secondary" style="margin-top:16px" onclick="navigate('attendance')">View My Attendance →</button>
   </div>`;
-  showToast('✅ Attendance recorded!');
+  showToast(certIssued ? '🏆 Certificate earned!' : '✅ Attendance recorded!');
 }
 
 /* ═══════════════════════════════════════════════
@@ -1837,21 +1861,31 @@ function submitExam(courseId) {
   const results = DB.get('exam_results');
   results.push(result);
   DB.set('exam_results', results);
-  showExamResult(course, result);
+  const certIssued = maybeIssueCertificate(currentUser.id, courseId);
+  showExamResult(course, result, certIssued);
 }
 
-function showExamResult(course, result) {
+function showExamResult(course, result, certIssued = false) {
   document.getElementById('topbar-title').textContent = 'Exam Result';
   document.getElementById('topbar-actions').innerHTML = `<button class="btn btn-ghost btn-sm" onclick="navigate('course-detail',{courseId:'${course.id}'})">← Back to Course</button>`;
 
   const passed = result.score >= 60;
+  // Check cert even if not freshly issued (re-viewing result)
+  const hasCert = certIssued || !!DB.get('certificates').find(c => c.studentId === currentUser.id && c.courseId === course.id);
+
   document.getElementById('page-content').innerHTML = `
     <div class="exam-wrap">
       <div class="exam-result">
-        <div style="font-size:48px;margin-bottom:8px">${passed ? '🎉' : '📚'}</div>
+        <div style="font-size:48px;margin-bottom:8px">${hasCert ? '🏆' : passed ? '🎉' : '📚'}</div>
         <div class="result-score">${result.score}%</div>
         <div class="result-label">${result.correct} / ${result.total} MCQ correct</div>
-        <div class="result-message">${passed ? 'Congratulations, you passed!' : 'Keep studying and try again!'}</div>
+        <div class="result-message">${hasCert ? 'You\'ve earned your certificate!' : passed ? 'Congratulations, you passed!' : 'Keep studying and try again!'}</div>
+        ${hasCert ? `
+        <div style="margin-top:16px">
+          <button class="cert-badge" onclick="openCertificate('${currentUser.id}','${course.id}')">
+            🎓 View &amp; Print Certificate
+          </button>
+        </div>` : ''}
         <div style="margin-top:28px;display:flex;gap:12px;justify-content:center">
           <button class="btn btn-secondary" onclick="navigate('course-detail',{courseId:'${course.id}'})">← Back to Course</button>
           <button class="btn btn-primary" onclick="navigate('my-courses')">My Courses</button>
@@ -1882,6 +1916,150 @@ function showExamResult(course, result) {
         }).join('')}
       </div>
     </div>`;
+}
+
+/* ═══════════════════════════════════════════════
+   CERTIFICATES
+═══════════════════════════════════════════════ */
+
+/* Check if a student has met all completion requirements for a course.
+   Online  : all lessons visited + exam score ≥ 60
+   Onsite  : attendance % ≥ threshold + exam score ≥ 60          */
+function checkCourseCompletion(studentId, courseId) {
+  const course     = DB.get('courses').find(c => c.id === courseId);
+  const student    = DB.get('users').find(u => u.id === studentId);
+  const result     = DB.get('exam_results').find(r => r.studentId === studentId && r.courseId === courseId);
+  const enrollment = DB.get('enrollments').find(e => e.studentId === studentId && e.courseId === courseId);
+  if (!course || !student || !result || !enrollment) return false;
+  if (result.score < 60) return false;
+
+  if (student.type === 'online') {
+    return course.lessons.every(l => enrollment.completedLessons.includes(l.id));
+  }
+  if (student.type === 'onsite') {
+    const att       = getStudentAttendance(studentId, courseId);
+    const threshold = course.attendanceThreshold || 75;
+    return att.pct >= threshold;
+  }
+  return false;
+}
+
+/* Called after exam submission and after attendance check-in.
+   Creates a certificate record if one doesn't exist yet.        */
+function maybeIssueCertificate(studentId, courseId) {
+  if (!checkCourseCompletion(studentId, courseId)) return false;
+  const existing = DB.get('certificates').find(c => c.studentId === studentId && c.courseId === courseId);
+  if (existing) return true; // already issued
+  const certs = DB.get('certificates');
+  certs.push({
+    id:        'CERT-' + uid().toUpperCase().slice(0, 8),
+    studentId, courseId,
+    issuedAt:  Date.now()
+  });
+  DB.set('certificates', certs);
+  return true;
+}
+
+/* Open a printable certificate in a new browser tab */
+function openCertificate(studentId, courseId) {
+  const cert    = DB.get('certificates').find(c => c.studentId === studentId && c.courseId === courseId);
+  const student = DB.get('users').find(u => u.id === studentId);
+  const course  = DB.get('courses').find(c => c.id === courseId);
+  if (!cert || !student || !course) { showToast('⚠️ Certificate not found'); return; }
+
+  const issued = new Date(cert.issuedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+  const track  = student.type === 'onsite' ? 'On-site Programme' : 'Online Programme';
+
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<title>Certificate — ${student.name}</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet"/>
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  @page{size:A4 landscape;margin:0;}
+  body{
+    width:297mm;height:210mm;display:flex;align-items:center;justify-content:center;
+    background:#fff;font-family:'DM Sans',sans-serif;
+    -webkit-print-color-adjust:exact;print-color-adjust:exact;
+  }
+  .cert{
+    width:270mm;height:190mm;position:relative;
+    border:1px solid #e8e8e8;border-radius:4px;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:0 28mm;text-align:center;overflow:hidden;
+  }
+  /* Corner accent bars */
+  .cert::before{content:'';position:absolute;top:0;left:0;width:18mm;height:5px;background:#FF6B00;}
+  .cert::after {content:'';position:absolute;bottom:0;right:0;width:18mm;height:5px;background:#FF6B00;}
+  .corner-tl{position:absolute;top:0;left:0;width:5px;height:18mm;background:#FF6B00;}
+  .corner-br{position:absolute;bottom:0;right:0;width:5px;height:18mm;background:#FF6B00;}
+  .corner-tr-h{position:absolute;top:0;right:0;width:18mm;height:5px;background:#0a0a0a;}
+  .corner-bl-h{position:absolute;bottom:0;left:0;width:18mm;height:5px;background:#0a0a0a;}
+  .corner-tr-v{position:absolute;top:0;right:0;width:5px;height:18mm;background:#0a0a0a;}
+  .corner-bl-v{position:absolute;bottom:0;left:0;width:5px;height:18mm;background:#0a0a0a;}
+  /* Watermark */
+  .wm{
+    position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+    font-family:'Bebas Neue',sans-serif;font-size:140pt;color:#f5f5f5;
+    letter-spacing:8px;white-space:nowrap;pointer-events:none;user-select:none;
+    z-index:0;
+  }
+  .content{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:0;}
+  .logo{font-family:'Bebas Neue',sans-serif;font-size:22pt;letter-spacing:3px;color:#0a0a0a;margin-bottom:10mm;}
+  .logo span{color:#FF6B00;}
+  .presents{font-size:9pt;letter-spacing:2px;text-transform:uppercase;color:#a0a0a0;margin-bottom:6mm;}
+  .cert-title{font-family:'DM Serif Display',serif;font-style:italic;font-size:32pt;color:#0a0a0a;line-height:1.1;margin-bottom:8mm;}
+  .student-name{
+    font-family:'Bebas Neue',sans-serif;font-size:44pt;letter-spacing:4px;color:#0a0a0a;
+    border-bottom:3px solid #FF6B00;padding-bottom:4mm;margin-bottom:8mm;line-height:1;
+  }
+  .completion{font-size:10pt;color:#555;margin-bottom:5mm;}
+  .course-name{font-family:'Bebas Neue',sans-serif;font-size:22pt;letter-spacing:2px;color:#FF6B00;margin-bottom:8mm;}
+  .track-badge{
+    display:inline-block;padding:3px 14px;border:1.5px solid #0a0a0a;border-radius:20px;
+    font-size:8pt;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#0a0a0a;margin-bottom:10mm;
+  }
+  .meta{display:flex;gap:16mm;font-size:8pt;color:#a0a0a0;text-transform:uppercase;letter-spacing:.8px;}
+  .meta-item{display:flex;flex-direction:column;align-items:center;gap:1mm;}
+  .meta-val{color:#0a0a0a;font-weight:600;font-size:9pt;letter-spacing:.5px;}
+  @media print{
+    body{margin:0;}
+    .no-print{display:none;}
+  }
+</style>
+</head>
+<body>
+<div class="cert">
+  <div class="wm">LF</div>
+  <div class="corner-tl"></div><div class="corner-br"></div>
+  <div class="corner-tr-h"></div><div class="corner-bl-h"></div>
+  <div class="corner-tr-v"></div><div class="corner-bl-v"></div>
+  <div class="content">
+    <div class="logo">LEARN<span>FORGE</span></div>
+    <div class="presents">This certificate is presented to</div>
+    <div class="student-name">${student.name}</div>
+    <div class="completion">for successfully completing</div>
+    <div class="course-name">${course.title}</div>
+    <div class="track-badge">${track}</div>
+    <div class="meta">
+      <div class="meta-item"><span>Issued</span><span class="meta-val">${issued}</span></div>
+      <div class="meta-item"><span>Certificate ID</span><span class="meta-val">${cert.id}</span></div>
+    </div>
+  </div>
+</div>
+<div class="no-print" style="position:fixed;bottom:20px;right:20px">
+  <button onclick="window.print()" style="padding:10px 24px;background:#FF6B00;color:#fff;border:none;border-radius:4px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;">
+    🖨️ Print / Save PDF
+  </button>
+</div>
+</body>
+</html>`;
+
+  const blob = new Blob([html], { type: 'text/html' });
+  const url  = URL.createObjectURL(blob);
+  window.open(url, '_blank');
 }
 
 /* ═══════════════════════════════════════════════
