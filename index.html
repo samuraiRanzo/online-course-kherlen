@@ -1,0 +1,1486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LearnForge — Course Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --black: #0a0a0a;
+    --white: #ffffff;
+    --gray-100: #f5f5f5;
+    --gray-200: #e8e8e8;
+    --gray-400: #a0a0a0;
+    --gray-600: #555555;
+    --orange: #FF6B00;
+    --orange-dark: #cc5500;
+    --orange-light: #fff3ea;
+    --font-display: 'Bebas Neue', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+    --radius: 4px;
+    --shadow: 0 2px 12px rgba(0,0,0,0.08);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--white);
+    color: var(--black);
+    min-height: 100vh;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* ─── UTILITY ─────────────────────────────────── */
+  .hidden { display: none !important; }
+  .flex { display: flex; }
+  .items-center { align-items: center; }
+  .gap-2 { gap: 8px; }
+  .gap-3 { gap: 12px; }
+  .gap-4 { gap: 16px; }
+  .w-full { width: 100%; }
+  .text-orange { color: var(--orange); }
+  .text-gray { color: var(--gray-600); }
+  .text-sm { font-size: 13px; }
+  .font-bold { font-weight: 600; }
+  .mt-1 { margin-top: 4px; }
+  .mt-2 { margin-top: 8px; }
+  .mt-3 { margin-top: 12px; }
+  .mt-4 { margin-top: 16px; }
+
+  /* ─── BUTTONS ──────────────────────────────────── */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    padding: 10px 20px; border: none; border-radius: var(--radius);
+    font-family: var(--font-body); font-size: 14px; font-weight: 600;
+    cursor: pointer; transition: all .18s ease; text-decoration: none;
+    white-space: nowrap;
+  }
+  .btn-primary { background: var(--orange); color: var(--white); }
+  .btn-primary:hover { background: var(--orange-dark); transform: translateY(-1px); }
+  .btn-secondary { background: var(--black); color: var(--white); }
+  .btn-secondary:hover { background: #222; }
+  .btn-outline { background: transparent; color: var(--black); border: 2px solid var(--black); }
+  .btn-outline:hover { background: var(--black); color: var(--white); }
+  .btn-ghost { background: transparent; color: var(--gray-600); border: 1px solid var(--gray-200); }
+  .btn-ghost:hover { border-color: var(--black); color: var(--black); }
+  .btn-danger { background: #e53e3e; color: #fff; }
+  .btn-danger:hover { background: #c53030; }
+  .btn-sm { padding: 6px 14px; font-size: 12px; }
+  .btn-lg { padding: 14px 32px; font-size: 16px; letter-spacing: .3px; }
+
+  /* ─── FORMS ────────────────────────────────────── */
+  .form-group { margin-bottom: 16px; }
+  .form-label { display: block; font-size: 12px; font-weight: 600; letter-spacing: .6px; text-transform: uppercase; color: var(--gray-600); margin-bottom: 6px; }
+  .form-control {
+    width: 100%; padding: 10px 14px; border: 2px solid var(--gray-200);
+    border-radius: var(--radius); font-family: var(--font-body); font-size: 14px;
+    background: var(--white); color: var(--black); transition: border-color .15s;
+    outline: none;
+  }
+  .form-control:focus { border-color: var(--orange); }
+  textarea.form-control { resize: vertical; min-height: 90px; }
+  select.form-control { cursor: pointer; }
+
+  /* ─── CARDS ────────────────────────────────────── */
+  .card {
+    background: var(--white); border: 1.5px solid var(--gray-200);
+    border-radius: 6px; padding: 24px; box-shadow: var(--shadow);
+  }
+  .card-title { font-family: var(--font-display); font-size: 22px; letter-spacing: .5px; }
+
+  /* ─── BADGE ────────────────────────────────────── */
+  .badge {
+    display: inline-block; padding: 3px 9px; border-radius: 20px;
+    font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .4px;
+  }
+  .badge-orange { background: var(--orange-light); color: var(--orange); }
+  .badge-black { background: var(--black); color: var(--white); }
+  .badge-gray { background: var(--gray-200); color: var(--gray-600); }
+  .badge-green { background: #e6f7ee; color: #25a244; }
+
+  /* ─── TOAST ────────────────────────────────────── */
+  #toast {
+    position: fixed; bottom: 24px; right: 24px; z-index: 9999;
+    background: var(--black); color: var(--white);
+    padding: 12px 20px; border-radius: var(--radius); font-size: 14px; font-weight: 500;
+    border-left: 4px solid var(--orange);
+    transform: translateY(60px); opacity: 0; transition: all .3s ease;
+    pointer-events: none;
+  }
+  #toast.show { transform: translateY(0); opacity: 1; }
+
+  /* ─── MODAL ────────────────────────────────────── */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,.55); z-index: 1000;
+    display: flex; align-items: center; justify-content: center; padding: 20px;
+  }
+  .modal {
+    background: var(--white); border-radius: 8px; width: 100%; max-width: 560px;
+    max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow-lg);
+  }
+  .modal-header {
+    padding: 20px 24px; border-bottom: 1.5px solid var(--gray-200);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .modal-header h3 { font-family: var(--font-display); font-size: 22px; letter-spacing: .4px; }
+  .modal-body { padding: 24px; }
+  .modal-footer { padding: 16px 24px; border-top: 1.5px solid var(--gray-200); display: flex; justify-content: flex-end; gap: 10px; }
+  .modal-close { background: none; border: none; font-size: 22px; cursor: pointer; color: var(--gray-600); line-height: 1; padding: 2px 6px; }
+  .modal-close:hover { color: var(--black); }
+
+  /* ─── LOGIN PAGE ───────────────────────────────── */
+  #page-login {
+    min-height: 100vh; display: flex;
+  }
+  .login-left {
+    width: 45%; background: var(--black); display: flex; flex-direction: column;
+    justify-content: center; padding: 60px; position: relative; overflow: hidden;
+  }
+  .login-left::before {
+    content: ''; position: absolute; top: -80px; right: -80px;
+    width: 280px; height: 280px; background: var(--orange); border-radius: 50%; opacity: .15;
+  }
+  .login-left::after {
+    content: ''; position: absolute; bottom: -60px; left: -60px;
+    width: 200px; height: 200px; background: var(--orange); border-radius: 50%; opacity: .08;
+  }
+  .login-logo { font-family: var(--font-display); font-size: 48px; color: var(--white); letter-spacing: 2px; line-height: 1; }
+  .login-logo span { color: var(--orange); }
+  .login-tagline { color: var(--gray-400); font-size: 15px; margin-top: 12px; max-width: 260px; line-height: 1.5; }
+  .login-features { margin-top: 48px; display: flex; flex-direction: column; gap: 16px; }
+  .login-feature { display: flex; align-items: center; gap: 12px; color: var(--gray-400); font-size: 14px; }
+  .login-feature-icon { width: 32px; height: 32px; background: rgba(255,107,0,.15); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+  .login-right { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px; }
+  .login-form-wrap { width: 100%; max-width: 380px; }
+  .login-form-wrap h2 { font-family: var(--font-display); font-size: 36px; letter-spacing: .5px; }
+  .login-form-wrap p { color: var(--gray-600); font-size: 14px; margin-top: 4px; margin-bottom: 32px; }
+  .login-divider { display: flex; align-items: center; gap: 12px; margin: 16px 0; }
+  .login-divider hr { flex: 1; border: none; border-top: 1px solid var(--gray-200); }
+  .login-divider span { font-size: 12px; color: var(--gray-400); }
+
+  /* ─── SHELL / NAV ──────────────────────────────── */
+  .shell { display: flex; min-height: 100vh; }
+  .sidebar {
+    width: 240px; background: var(--black); display: flex; flex-direction: column;
+    position: fixed; top: 0; left: 0; height: 100vh; overflow-y: auto; z-index: 100;
+  }
+  .sidebar-logo { padding: 24px 20px; font-family: var(--font-display); font-size: 28px; color: var(--white); letter-spacing: 1px; border-bottom: 1px solid #1e1e1e; }
+  .sidebar-logo span { color: var(--orange); }
+  .sidebar-nav { padding: 16px 0; flex: 1; }
+  .nav-section { padding: 8px 20px 4px; font-size: 10px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: #555; }
+  .nav-item {
+    display: flex; align-items: center; gap: 10px; padding: 10px 20px;
+    color: #888; font-size: 14px; font-weight: 500; cursor: pointer;
+    transition: all .15s; border-left: 3px solid transparent; text-decoration: none;
+  }
+  .nav-item:hover { color: var(--white); background: rgba(255,255,255,.05); }
+  .nav-item.active { color: var(--white); border-left-color: var(--orange); background: rgba(255,107,0,.08); }
+  .nav-item .nav-icon { width: 18px; text-align: center; font-size: 16px; }
+  .sidebar-footer { padding: 16px 20px; border-top: 1px solid #1e1e1e; }
+  .sidebar-user { display: flex; align-items: center; gap: 10px; }
+  .sidebar-avatar { width: 34px; height: 34px; background: var(--orange); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--white); font-size: 14px; flex-shrink: 0; }
+  .sidebar-user-info { flex: 1; overflow: hidden; }
+  .sidebar-user-name { font-size: 13px; font-weight: 600; color: var(--white); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sidebar-user-role { font-size: 11px; color: #555; text-transform: uppercase; letter-spacing: .5px; }
+  .logout-btn { background: none; border: none; color: #555; cursor: pointer; font-size: 16px; padding: 4px; transition: color .15s; }
+  .logout-btn:hover { color: var(--orange); }
+
+  .main-content { margin-left: 240px; flex: 1; min-height: 100vh; background: var(--gray-100); }
+  .topbar { background: var(--white); border-bottom: 1.5px solid var(--gray-200); padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; }
+  .topbar-title { font-family: var(--font-display); font-size: 26px; letter-spacing: .5px; }
+  .page-content { padding: 32px; }
+
+  /* ─── STATS GRID ───────────────────────────────── */
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; margin-bottom: 28px; }
+  .stat-card { background: var(--white); border: 1.5px solid var(--gray-200); border-radius: 6px; padding: 20px; }
+  .stat-label { font-size: 11px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; color: var(--gray-400); }
+  .stat-value { font-family: var(--font-display); font-size: 42px; letter-spacing: 1px; line-height: 1.1; margin-top: 4px; }
+  .stat-sub { font-size: 12px; color: var(--gray-600); margin-top: 2px; }
+  .stat-card.accent { background: var(--orange); border-color: var(--orange); }
+  .stat-card.accent .stat-label { color: rgba(255,255,255,.7); }
+  .stat-card.accent .stat-value { color: var(--white); }
+  .stat-card.accent .stat-sub { color: rgba(255,255,255,.7); }
+
+  /* ─── TABLE ────────────────────────────────────── */
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; }
+  th { padding: 10px 14px; text-align: left; font-size: 11px; font-weight: 700; letter-spacing: .7px; text-transform: uppercase; color: var(--gray-600); border-bottom: 2px solid var(--gray-200); }
+  td { padding: 13px 14px; font-size: 14px; border-bottom: 1px solid var(--gray-200); vertical-align: middle; }
+  tr:hover td { background: var(--gray-100); }
+  tr:last-child td { border-bottom: none; }
+
+  /* ─── COURSES GRID ─────────────────────────────── */
+  .courses-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+  .course-card {
+    background: var(--white); border: 1.5px solid var(--gray-200); border-radius: 8px;
+    overflow: hidden; transition: box-shadow .2s, transform .2s; cursor: pointer;
+  }
+  .course-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
+  .course-card-thumb {
+    height: 140px; background: var(--black); display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display); font-size: 40px; color: var(--orange); position: relative;
+    overflow: hidden;
+  }
+  .course-card-thumb::after {
+    content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 4px;
+    background: var(--orange);
+  }
+  .course-card-body { padding: 18px; }
+  .course-card-title { font-family: var(--font-display); font-size: 20px; letter-spacing: .3px; line-height: 1.2; }
+  .course-card-desc { font-size: 13px; color: var(--gray-600); margin-top: 6px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .course-card-meta { display: flex; align-items: center; justify-content: space-between; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--gray-200); }
+  .course-meta-item { font-size: 12px; color: var(--gray-600); }
+  .course-meta-item strong { color: var(--black); font-weight: 600; }
+
+  /* ─── LESSON LIST ──────────────────────────────── */
+  .lesson-list { border: 1.5px solid var(--gray-200); border-radius: 6px; overflow: hidden; }
+  .lesson-item { padding: 14px 18px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--gray-200); cursor: pointer; transition: background .15s; }
+  .lesson-item:last-child { border-bottom: none; }
+  .lesson-item:hover { background: var(--gray-100); }
+  .lesson-item.active { background: var(--orange-light); border-left: 3px solid var(--orange); }
+  .lesson-num { width: 28px; height: 28px; border-radius: 50%; background: var(--gray-200); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; color: var(--gray-600); }
+  .lesson-item.active .lesson-num { background: var(--orange); color: var(--white); }
+  .lesson-item-info { flex: 1; }
+  .lesson-item-title { font-size: 14px; font-weight: 500; }
+  .lesson-item-type { font-size: 12px; color: var(--gray-400); }
+  .lesson-type-icon { font-size: 18px; }
+
+  /* ─── LESSON VIEWER ────────────────────────────── */
+  .lesson-viewer { background: var(--white); border: 1.5px solid var(--gray-200); border-radius: 8px; padding: 32px; }
+  .lesson-viewer h2 { font-family: var(--font-display); font-size: 32px; letter-spacing: .5px; }
+  .video-embed { margin-top: 20px; background: var(--black); border-radius: 6px; overflow: hidden; aspect-ratio: 16/9; display: flex; align-items: center; justify-content: center; }
+  .video-embed iframe { width: 100%; height: 100%; border: none; }
+  .video-placeholder { color: var(--gray-600); text-align: center; }
+  .video-placeholder .play-icon { font-size: 48px; display: block; margin-bottom: 8px; }
+  .lesson-text-content { margin-top: 20px; line-height: 1.8; color: var(--black); font-size: 15px; }
+  .lesson-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 28px; padding-top: 20px; border-top: 1.5px solid var(--gray-200); }
+
+  /* ─── EXAM ─────────────────────────────────────── */
+  .exam-wrap { max-width: 680px; }
+  .exam-header { background: var(--black); color: var(--white); border-radius: 8px; padding: 28px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; }
+  .exam-title { font-family: var(--font-display); font-size: 30px; letter-spacing: .5px; }
+  .exam-meta { font-size: 13px; color: #aaa; margin-top: 4px; }
+  .exam-progress { text-align: right; }
+  .exam-progress-val { font-family: var(--font-display); font-size: 40px; color: var(--orange); line-height: 1; }
+  .exam-progress-label { font-size: 12px; color: #aaa; }
+  .question-card { background: var(--white); border: 1.5px solid var(--gray-200); border-radius: 8px; padding: 24px; margin-bottom: 16px; }
+  .question-num { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .8px; color: var(--orange); margin-bottom: 8px; }
+  .question-text { font-size: 16px; font-weight: 500; line-height: 1.5; margin-bottom: 18px; }
+  .option-list { display: flex; flex-direction: column; gap: 10px; }
+  .option-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border: 2px solid var(--gray-200); border-radius: 6px; cursor: pointer; transition: all .15s; user-select: none; }
+  .option-item:hover { border-color: var(--orange); background: var(--orange-light); }
+  .option-item.selected { border-color: var(--orange); background: var(--orange-light); }
+  .option-item.correct { border-color: #25a244; background: #e6f7ee; }
+  .option-item.wrong { border-color: #e53e3e; background: #fff5f5; }
+  .option-radio { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--gray-300); flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all .15s; }
+  .option-item.selected .option-radio { border-color: var(--orange); background: var(--orange); }
+  .option-item.selected .option-radio::after { content: ''; width: 7px; height: 7px; background: var(--white); border-radius: 50%; }
+  .open-answer { width: 100%; padding: 12px 14px; border: 2px solid var(--gray-200); border-radius: 6px; font-family: var(--font-body); font-size: 14px; min-height: 100px; resize: vertical; outline: none; transition: border-color .15s; }
+  .open-answer:focus { border-color: var(--orange); }
+  .exam-result { background: var(--white); border: 1.5px solid var(--gray-200); border-radius: 8px; padding: 40px; text-align: center; }
+  .result-score { font-family: var(--font-display); font-size: 80px; color: var(--orange); line-height: 1; }
+  .result-label { font-size: 15px; color: var(--gray-600); margin-top: 4px; }
+  .result-message { margin-top: 16px; font-size: 16px; font-weight: 500; }
+
+  /* ─── TABS ─────────────────────────────────────── */
+  .tabs { display: flex; gap: 0; border-bottom: 2px solid var(--gray-200); margin-bottom: 24px; }
+  .tab { padding: 10px 20px; font-size: 14px; font-weight: 600; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; color: var(--gray-600); transition: all .15s; }
+  .tab:hover { color: var(--black); }
+  .tab.active { color: var(--orange); border-bottom-color: var(--orange); }
+
+  /* ─── SECTION HEADER ───────────────────────────── */
+  .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+  .section-title { font-family: var(--font-display); font-size: 24px; letter-spacing: .5px; }
+
+  /* ─── PROGRESS BAR ─────────────────────────────── */
+  .progress-bar { height: 6px; background: var(--gray-200); border-radius: 3px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--orange); border-radius: 3px; transition: width .3s; }
+
+  /* ─── EMPTY STATE ──────────────────────────────── */
+  .empty-state { text-align: center; padding: 60px 20px; color: var(--gray-600); }
+  .empty-icon { font-size: 48px; display: block; margin-bottom: 12px; }
+  .empty-state h3 { font-family: var(--font-display); font-size: 24px; color: var(--black); letter-spacing: .5px; }
+  .empty-state p { font-size: 14px; margin-top: 6px; }
+
+  /* ─── COURSE DETAIL ────────────────────────────── */
+  .course-detail-layout { display: grid; grid-template-columns: 1fr 320px; gap: 24px; align-items: start; }
+  .course-sidebar-card { background: var(--white); border: 1.5px solid var(--gray-200); border-radius: 8px; overflow: hidden; position: sticky; top: 90px; }
+  .course-sidebar-thumb { height: 160px; background: var(--black); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-size: 56px; color: var(--orange); }
+  .course-sidebar-info { padding: 20px; }
+  .course-sidebar-info h3 { font-family: var(--font-display); font-size: 22px; letter-spacing: .4px; }
+
+  /* ─── QUESTION BUILDER ─────────────────────────── */
+  .question-builder { border: 1.5px solid var(--gray-200); border-radius: 8px; padding: 20px; margin-bottom: 16px; background: var(--gray-100); }
+  .question-builder-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .option-builder { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
+  .option-builder .form-control { flex: 1; }
+
+  /* responsive tweaks */
+  @media (max-width: 900px) {
+    .login-left { display: none; }
+    .course-detail-layout { grid-template-columns: 1fr; }
+    .course-sidebar-card { position: static; }
+    .sidebar { transform: translateX(-100%); }
+    .main-content { margin-left: 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ─── TOAST ──────────────────────── -->
+<div id="toast"></div>
+
+<!-- ═══════════════════════════════════
+     LOGIN PAGE
+════════════════════════════════════ -->
+<div id="page-login">
+  <div class="login-left">
+    <div class="login-logo">LEARN<span>FORGE</span></div>
+    <p class="login-tagline">Build skills. Take exams. Track progress. All in one place.</p>
+    <div class="login-features">
+      <div class="login-feature">
+        <div class="login-feature-icon">📚</div>
+        Text & Video lessons in structured courses
+      </div>
+      <div class="login-feature">
+        <div class="login-feature-icon">✍️</div>
+        Built-in exams with multiple question types
+      </div>
+      <div class="login-feature">
+        <div class="login-feature-icon">📊</div>
+        Track student progress and results
+      </div>
+    </div>
+  </div>
+  <div class="login-right">
+    <div class="login-form-wrap">
+      <h2>Welcome back</h2>
+      <p>Sign in to continue to LearnForge</p>
+      <div class="form-group">
+        <label class="form-label">Email address</label>
+        <input type="email" id="login-email" class="form-control" placeholder="you@example.com" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input type="password" id="login-pass" class="form-control" placeholder="••••••••" />
+      </div>
+      <button class="btn btn-primary w-full btn-lg" style="margin-top:8px" onclick="doLogin()">Sign In →</button>
+      <div class="login-divider"><hr /><span>DEMO ACCOUNTS</span><hr /></div>
+      <div style="display:flex;gap:10px">
+        <button class="btn btn-ghost w-full btn-sm" onclick="quickLogin('admin@learnforge.com','admin123')">🎓 Teacher Demo</button>
+        <button class="btn btn-ghost w-full btn-sm" onclick="quickLogin('student@learnforge.com','student123')">👤 Student Demo</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     APP SHELL
+════════════════════════════════════ -->
+<div id="app-shell" class="shell hidden">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">LEARN<span>FORGE</span></div>
+    <nav class="sidebar-nav" id="sidebar-nav"></nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="sidebar-avatar" id="sidebar-avatar">?</div>
+        <div class="sidebar-user-info">
+          <div class="sidebar-user-name" id="sidebar-name">—</div>
+          <div class="sidebar-user-role" id="sidebar-role">—</div>
+        </div>
+        <button class="logout-btn" onclick="doLogout()" title="Logout">⏻</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main-content">
+    <div class="topbar">
+      <div class="topbar-title" id="topbar-title">Dashboard</div>
+      <div id="topbar-actions"></div>
+    </div>
+    <div class="page-content" id="page-content"></div>
+  </main>
+</div>
+
+<!-- ─── MODALS CONTAINER ────────────── -->
+<div id="modals-container"></div>
+
+<script>
+/* ═══════════════════════════════════════════════
+   DATA LAYER — localStorage JSON store
+═══════════════════════════════════════════════ */
+const DB = {
+  get(key) { try { return JSON.parse(localStorage.getItem('lf_' + key)) || []; } catch { return []; } },
+  set(key, val) { localStorage.setItem('lf_' + key, JSON.stringify(val)); },
+  getObj(key, def = {}) { try { return JSON.parse(localStorage.getItem('lf_' + key)) || def; } catch { return def; } },
+  setObj(key, val) { localStorage.setItem('lf_' + key, JSON.stringify(val)); }
+};
+
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+
+/* ─── SEED DEFAULT DATA ─── */
+function seedData() {
+  if (DB.get('users').length) return;
+  const users = [
+    { id: 'admin001', name: 'Alex Teacher', email: 'admin@learnforge.com', password: 'admin123', role: 'admin' },
+    { id: 'stu001', name: 'Sam Student', email: 'student@learnforge.com', password: 'student123', role: 'student' }
+  ];
+  DB.set('users', users);
+
+  const courses = [{
+    id: 'c001', title: 'JavaScript Fundamentals', description: 'Learn the core concepts of JavaScript from scratch. Variables, functions, arrays, objects and more.',
+    icon: 'JS', createdAt: Date.now(),
+    lessons: [
+      { id: 'l001', title: 'Introduction to Variables', type: 'text', content: 'Variables are containers for storing data values. In JavaScript, we use `let`, `const`, and `var` to declare variables.\n\n**let** — block-scoped variable that can be reassigned.\n**const** — block-scoped variable that cannot be reassigned.\n**var** — function-scoped (older style, avoid in modern JS).\n\nExample:\n```js\nlet name = "Alice";\nconst age = 30;\nvar city = "Berlin"; // avoid this\n```\n\nAlways prefer `const` by default, and use `let` when you need to reassign. Avoid `var` in modern JavaScript.' },
+      { id: 'l002', title: 'Functions Explained', type: 'video', videoUrl: 'https://www.youtube.com/embed/N8ap4k_1QEQ', content: 'Functions are reusable blocks of code that perform a specific task.' },
+      { id: 'l003', title: 'Arrays & Objects', type: 'text', content: 'Arrays store ordered lists of values. Objects store key-value pairs.\n\n**Array:**\n```js\nconst fruits = ["apple", "banana", "cherry"];\n```\n\n**Object:**\n```js\nconst person = { name: "Bob", age: 25 };\n```\n\nYou can access array items by index (starting at 0) and object properties by key using dot notation or bracket notation.' }
+    ],
+    exam: {
+      id: 'e001', title: 'JS Fundamentals Exam', questions: [
+        { id: 'q001', type: 'mcq', text: 'Which keyword is used to declare a block-scoped variable that cannot be reassigned?', options: ['var', 'let', 'const', 'function'], correct: 2 },
+        { id: 'q002', type: 'mcq', text: 'What does the following return: typeof []?', options: ['"array"', '"object"', '"list"', '"undefined"'], correct: 1 },
+        { id: 'q003', type: 'open', text: 'Explain in your own words what a JavaScript function does and why we use them.' },
+        { id: 'q004', type: 'mcq', text: 'How do you access the first element of an array called `items`?', options: ['items[1]', 'items.first()', 'items[0]', 'items.get(0)'], correct: 2 }
+      ]
+    }
+  }];
+  DB.set('courses', courses);
+
+  DB.set('enrollments', [
+    { id: 'en001', studentId: 'stu001', courseId: 'c001', completedLessons: [], enrolledAt: Date.now() }
+  ]);
+  DB.set('exam_results', []);
+}
+
+/* ═══════════════════════════════════════════════
+   AUTH
+═══════════════════════════════════════════════ */
+let currentUser = null;
+
+function doLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const pass = document.getElementById('login-pass').value;
+  const users = DB.get('users');
+  const user = users.find(u => u.email === email && u.password === pass);
+  if (!user) { showToast('❌ Invalid email or password'); return; }
+  loginSuccess(user);
+}
+
+function quickLogin(email, pass) {
+  document.getElementById('login-email').value = email;
+  document.getElementById('login-pass').value = pass;
+  doLogin();
+}
+
+function loginSuccess(user) {
+  currentUser = user;
+  document.getElementById('page-login').classList.add('hidden');
+  document.getElementById('app-shell').classList.remove('hidden');
+  document.getElementById('sidebar-name').textContent = user.name;
+  document.getElementById('sidebar-role').textContent = user.role === 'admin' ? 'Teacher' : 'Student';
+  document.getElementById('sidebar-avatar').textContent = user.name.charAt(0).toUpperCase();
+  buildSidebar();
+  navigate('dashboard');
+  showToast(`👋 Welcome back, ${user.name.split(' ')[0]}!`);
+}
+
+function doLogout() {
+  currentUser = null;
+  document.getElementById('app-shell').classList.add('hidden');
+  document.getElementById('page-login').classList.remove('hidden');
+  document.getElementById('login-email').value = '';
+  document.getElementById('login-pass').value = '';
+}
+
+/* ═══════════════════════════════════════════════
+   ROUTER
+═══════════════════════════════════════════════ */
+let currentRoute = null;
+let routeParams = {};
+
+function navigate(route, params = {}) {
+  currentRoute = route;
+  routeParams = params;
+  const routes = {
+    dashboard: renderDashboard,
+    students: renderStudents,
+    courses: renderCourses,
+    'course-detail': renderCourseDetail,
+    'lesson-view': renderLessonView,
+    'exam-view': renderExamView,
+    'my-courses': renderMyCourses
+  };
+  // update sidebar active
+  document.querySelectorAll('.nav-item').forEach(el => {
+    el.classList.toggle('active', el.dataset.route === route);
+  });
+  if (routes[route]) routes[route](params);
+}
+
+/* ═══════════════════════════════════════════════
+   SIDEBAR BUILDER
+═══════════════════════════════════════════════ */
+function buildSidebar() {
+  const nav = document.getElementById('sidebar-nav');
+  const isAdmin = currentUser.role === 'admin';
+  const items = isAdmin ? [
+    { section: 'Overview' },
+    { route: 'dashboard', icon: '⊞', label: 'Dashboard' },
+    { section: 'Manage' },
+    { route: 'students', icon: '👥', label: 'Students' },
+    { route: 'courses', icon: '📚', label: 'Courses' }
+  ] : [
+    { section: 'Overview' },
+    { route: 'dashboard', icon: '⊞', label: 'Dashboard' },
+    { section: 'Learning' },
+    { route: 'my-courses', icon: '📚', label: 'My Courses' }
+  ];
+  nav.innerHTML = items.map(item => {
+    if (item.section) return `<div class="nav-section">${item.section}</div>`;
+    return `<div class="nav-item" data-route="${item.route}" onclick="navigate('${item.route}')">
+      <span class="nav-icon">${item.icon}</span>${item.label}
+    </div>`;
+  }).join('');
+}
+
+/* ═══════════════════════════════════════════════
+   TOAST
+═══════════════════════════════════════════════ */
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3200);
+}
+
+/* ═══════════════════════════════════════════════
+   MODAL HELPER
+═══════════════════════════════════════════════ */
+function openModal(title, bodyHTML, footerHTML = '') {
+  closeModal();
+  const el = document.createElement('div');
+  el.className = 'modal-overlay';
+  el.id = 'active-modal';
+  el.innerHTML = `
+    <div class="modal">
+      <div class="modal-header">
+        <h3>${title}</h3>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+      </div>
+      <div class="modal-body">${bodyHTML}</div>
+      ${footerHTML ? `<div class="modal-footer">${footerHTML}</div>` : ''}
+    </div>`;
+  el.addEventListener('click', e => { if (e.target === el) closeModal(); });
+  document.getElementById('modals-container').appendChild(el);
+}
+function closeModal() {
+  const m = document.getElementById('active-modal');
+  if (m) m.remove();
+}
+
+/* ═══════════════════════════════════════════════
+   PAGE: ADMIN DASHBOARD
+═══════════════════════════════════════════════ */
+function renderDashboard() {
+  const title = currentUser.role === 'admin' ? 'Dashboard' : 'My Dashboard';
+  document.getElementById('topbar-title').textContent = title;
+  document.getElementById('topbar-actions').innerHTML = '';
+
+  if (currentUser.role === 'admin') {
+    const users = DB.get('users').filter(u => u.role === 'student');
+    const courses = DB.get('courses');
+    const results = DB.get('exam_results');
+    const enrollments = DB.get('enrollments');
+
+    document.getElementById('page-content').innerHTML = `
+      <div class="stats-grid">
+        <div class="stat-card accent">
+          <div class="stat-label">Total Students</div>
+          <div class="stat-value">${users.length}</div>
+          <div class="stat-sub">Registered accounts</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Courses</div>
+          <div class="stat-value">${courses.length}</div>
+          <div class="stat-sub">Active courses</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Enrollments</div>
+          <div class="stat-value">${enrollments.length}</div>
+          <div class="stat-sub">Course enrollments</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Exams Taken</div>
+          <div class="stat-value">${results.length}</div>
+          <div class="stat-sub">Submitted exams</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
+        <div class="card">
+          <div class="section-header" style="margin-bottom:16px">
+            <div class="card-title">Recent Students</div>
+            <button class="btn btn-ghost btn-sm" onclick="navigate('students')">View all</button>
+          </div>
+          ${users.length === 0 ? `<p class="text-gray text-sm">No students yet.</p>` : `
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Name</th><th>Email</th></tr></thead>
+              <tbody>${users.slice(-5).reverse().map(u => `
+                <tr><td><strong>${u.name}</strong></td><td class="text-gray">${u.email}</td></tr>
+              `).join('')}</tbody>
+            </table>
+          </div>`}
+        </div>
+        <div class="card">
+          <div class="section-header" style="margin-bottom:16px">
+            <div class="card-title">Recent Exams</div>
+          </div>
+          ${results.length === 0 ? `<p class="text-gray text-sm">No exam results yet.</p>` : `
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Student</th><th>Course</th><th>Score</th></tr></thead>
+              <tbody>${results.slice(-8).reverse().map(r => {
+                const u = DB.get('users').find(x => x.id === r.studentId);
+                const c = DB.get('courses').find(x => x.id === r.courseId);
+                return `<tr>
+                  <td>${u ? u.name : '—'}</td>
+                  <td class="text-gray">${c ? c.title : '—'}</td>
+                  <td><span class="badge ${r.score >= 70 ? 'badge-green' : 'badge-orange'}">${r.score}%</span></td>
+                </tr>`;
+              }).join('')}</tbody>
+            </table>
+          </div>`}
+        </div>
+      </div>`;
+  } else {
+    // Student dashboard
+    const enrollments = DB.get('enrollments').filter(e => e.studentId === currentUser.id);
+    const courses = DB.get('courses');
+    const results = DB.get('exam_results').filter(r => r.studentId === currentUser.id);
+
+    const enrolled = enrollments.map(e => {
+      const c = courses.find(x => x.id === e.courseId);
+      const total = c ? c.lessons.length : 0;
+      const done = e.completedLessons.length;
+      const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+      const result = results.find(r => r.courseId === e.courseId);
+      return { ...e, course: c, total, done, pct, result };
+    }).filter(e => e.course);
+
+    document.getElementById('page-content').innerHTML = `
+      <div class="stats-grid">
+        <div class="stat-card accent">
+          <div class="stat-label">Enrolled Courses</div>
+          <div class="stat-value">${enrolled.length}</div>
+          <div class="stat-sub">Active enrollments</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Exams Taken</div>
+          <div class="stat-value">${results.length}</div>
+          <div class="stat-sub">Completed exams</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Best Score</div>
+          <div class="stat-value">${results.length ? Math.max(...results.map(r => r.score)) + '%' : '—'}</div>
+          <div class="stat-sub">Highest exam score</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:16px">Your Courses</div>
+        ${enrolled.length === 0 ? `<p class="text-gray text-sm">You are not enrolled in any courses.</p>` : enrolled.map(e => `
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--gray-200)">
+            <div style="flex:1">
+              <div style="font-weight:600;font-size:15px">${e.course.title}</div>
+              <div style="margin-top:6px;display:flex;align-items:center;gap:10px">
+                <div class="progress-bar" style="width:160px"><div class="progress-fill" style="width:${e.pct}%"></div></div>
+                <span class="text-sm text-gray">${e.done}/${e.total} lessons</span>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px">
+              ${e.result ? `<span class="badge badge-green">Exam: ${e.result.score}%</span>` : ''}
+              <button class="btn btn-primary btn-sm" onclick="navigate('course-detail', {courseId:'${e.course.id}'})">Continue →</button>
+            </div>
+          </div>
+        `).join('')}
+      </div>`;
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   PAGE: STUDENTS (Admin)
+═══════════════════════════════════════════════ */
+function renderStudents() {
+  document.getElementById('topbar-title').textContent = 'Students';
+  document.getElementById('topbar-actions').innerHTML = `<button class="btn btn-primary btn-sm" onclick="openAddStudentModal()">+ Add Student</button>`;
+  refreshStudentsTable();
+}
+
+function refreshStudentsTable() {
+  const students = DB.get('users').filter(u => u.role === 'student');
+  const enrollments = DB.get('enrollments');
+  const results = DB.get('exam_results');
+  const courses = DB.get('courses');
+
+  document.getElementById('page-content').innerHTML = `
+    <div class="card">
+      <div class="table-wrap">
+        ${students.length === 0 ? `<div class="empty-state"><span class="empty-icon">👥</span><h3>No students yet</h3><p>Add your first student using the button above.</p></div>` : `
+        <table>
+          <thead><tr><th>Name</th><th>Email</th><th>Enrolled In</th><th>Exams</th><th>Actions</th></tr></thead>
+          <tbody>${students.map(s => {
+            const sEnrollments = enrollments.filter(e => e.studentId === s.id);
+            const sResults = results.filter(r => r.studentId === s.id);
+            return `<tr>
+              <td><div style="display:flex;align-items:center;gap:10px">
+                <div class="sidebar-avatar" style="width:30px;height:30px;font-size:12px">${s.name.charAt(0)}</div>
+                <strong>${s.name}</strong>
+              </div></td>
+              <td class="text-gray">${s.email}</td>
+              <td>${sEnrollments.length > 0 ? sEnrollments.map(e => {
+                const c = courses.find(x => x.id === e.courseId);
+                return c ? `<span class="badge badge-gray" style="margin-right:4px">${c.title}</span>` : '';
+              }).join('') : '<span class="text-gray text-sm">None</span>'}</td>
+              <td>${sResults.length > 0 ? `<span class="badge badge-orange">${sResults.length} exam(s)</span>` : '<span class="text-gray text-sm">—</span>'}</td>
+              <td><div style="display:flex;gap:6px">
+                <button class="btn btn-ghost btn-sm" onclick="openEnrollModal('${s.id}', '${s.name}')">Enroll</button>
+                <button class="btn btn-danger btn-sm" onclick="deleteStudent('${s.id}')">Remove</button>
+              </div></td>
+            </tr>`;
+          }).join('')}</tbody>
+        </table>`}
+      </div>
+    </div>`;
+}
+
+function openAddStudentModal() {
+  openModal('Add New Student',
+    `<div class="form-group"><label class="form-label">Full Name</label><input type="text" id="ns-name" class="form-control" placeholder="Jane Doe" /></div>
+     <div class="form-group"><label class="form-label">Email Address</label><input type="email" id="ns-email" class="form-control" placeholder="jane@example.com" /></div>
+     <div class="form-group"><label class="form-label">Password</label><input type="password" id="ns-pass" class="form-control" placeholder="Set a password" /></div>`,
+    `<button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+     <button class="btn btn-primary" onclick="addStudent()">Create Account</button>`
+  );
+}
+
+function addStudent() {
+  const name = document.getElementById('ns-name').value.trim();
+  const email = document.getElementById('ns-email').value.trim();
+  const pass = document.getElementById('ns-pass').value;
+  if (!name || !email || !pass) { showToast('⚠️ All fields are required'); return; }
+  const users = DB.get('users');
+  if (users.find(u => u.email === email)) { showToast('⚠️ Email already exists'); return; }
+  users.push({ id: uid(), name, email, password: pass, role: 'student' });
+  DB.set('users', users);
+  closeModal();
+  showToast('✅ Student account created');
+  refreshStudentsTable();
+}
+
+function deleteStudent(id) {
+  if (!confirm('Remove this student? Their enrollments and exam results will also be deleted.')) return;
+  DB.set('users', DB.get('users').filter(u => u.id !== id));
+  DB.set('enrollments', DB.get('enrollments').filter(e => e.studentId !== id));
+  DB.set('exam_results', DB.get('exam_results').filter(r => r.studentId !== id));
+  showToast('🗑️ Student removed');
+  refreshStudentsTable();
+}
+
+function openEnrollModal(studentId, studentName) {
+  const courses = DB.get('courses');
+  const enrolled = DB.get('enrollments').filter(e => e.studentId === studentId).map(e => e.courseId);
+  const available = courses.filter(c => !enrolled.includes(c.id));
+  if (available.length === 0) { showToast('ℹ️ Student is enrolled in all courses'); return; }
+  openModal(`Enroll ${studentName}`,
+    `<div class="form-group"><label class="form-label">Select Course</label>
+     <select id="enroll-course" class="form-control">
+       ${available.map(c => `<option value="${c.id}">${c.title}</option>`).join('')}
+     </select></div>`,
+    `<button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+     <button class="btn btn-primary" onclick="enrollStudent('${studentId}')">Enroll →</button>`
+  );
+}
+
+function enrollStudent(studentId) {
+  const courseId = document.getElementById('enroll-course').value;
+  const enrollments = DB.get('enrollments');
+  enrollments.push({ id: uid(), studentId, courseId, completedLessons: [], enrolledAt: Date.now() });
+  DB.set('enrollments', enrollments);
+  closeModal();
+  showToast('✅ Student enrolled in course');
+  refreshStudentsTable();
+}
+
+/* ═══════════════════════════════════════════════
+   PAGE: COURSES (Admin)
+═══════════════════════════════════════════════ */
+function renderCourses() {
+  document.getElementById('topbar-title').textContent = 'Courses';
+  document.getElementById('topbar-actions').innerHTML = `<button class="btn btn-primary btn-sm" onclick="openCreateCourseModal()">+ New Course</button>`;
+  refreshCoursesGrid();
+}
+
+function refreshCoursesGrid() {
+  const courses = DB.get('courses');
+  document.getElementById('page-content').innerHTML = courses.length === 0
+    ? `<div class="empty-state"><span class="empty-icon">📚</span><h3>No courses yet</h3><p>Create your first course to get started.</p></div>`
+    : `<div class="courses-grid">${courses.map(c => `
+        <div class="course-card" onclick="navigate('course-detail', {courseId:'${c.id}'})">
+          <div class="course-card-thumb">${c.icon || '📚'}</div>
+          <div class="course-card-body">
+            <div class="course-card-title">${c.title}</div>
+            <div class="course-card-desc">${c.description}</div>
+            <div class="course-card-meta">
+              <div class="course-meta-item"><strong>${c.lessons.length}</strong> Lessons</div>
+              <div class="course-meta-item">${c.exam ? `<span class="badge badge-orange">Has Exam</span>` : `<span class="badge badge-gray">No Exam</span>`}</div>
+            </div>
+          </div>
+        </div>
+      `).join('')}</div>`;
+}
+
+function openCreateCourseModal() {
+  openModal('Create New Course',
+    `<div class="form-group"><label class="form-label">Course Title</label><input type="text" id="nc-title" class="form-control" placeholder="e.g. Python Fundamentals" /></div>
+     <div class="form-group"><label class="form-label">Description</label><textarea id="nc-desc" class="form-control" placeholder="What will students learn?"></textarea></div>
+     <div class="form-group"><label class="form-label">Icon (emoji)</label><input type="text" id="nc-icon" class="form-control" placeholder="📚" maxlength="2" /></div>`,
+    `<button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+     <button class="btn btn-primary" onclick="createCourse()">Create Course</button>`
+  );
+}
+
+function createCourse() {
+  const title = document.getElementById('nc-title').value.trim();
+  const desc = document.getElementById('nc-desc').value.trim();
+  const icon = document.getElementById('nc-icon').value.trim() || '📚';
+  if (!title) { showToast('⚠️ Title is required'); return; }
+  const courses = DB.get('courses');
+  courses.push({ id: uid(), title, description: desc, icon, lessons: [], exam: null, createdAt: Date.now() });
+  DB.set('courses', courses);
+  closeModal();
+  showToast('✅ Course created');
+  refreshCoursesGrid();
+}
+
+/* ═══════════════════════════════════════════════
+   PAGE: COURSE DETAIL (Admin)
+═══════════════════════════════════════════════ */
+function renderCourseDetail({ courseId }) {
+  const courses = DB.get('courses');
+  const course = courses.find(c => c.id === courseId);
+  if (!course) { navigate('courses'); return; }
+
+  document.getElementById('topbar-title').textContent = course.title;
+  document.getElementById('topbar-actions').innerHTML = `<button class="btn btn-ghost btn-sm" onclick="navigate('courses')">← Back</button>`;
+
+  document.getElementById('page-content').innerHTML = `
+    <div class="tabs">
+      <div class="tab active" id="tab-lessons" onclick="switchCourseTab('lessons','${courseId}')">Lessons</div>
+      <div class="tab" id="tab-exam" onclick="switchCourseTab('exam','${courseId}')">Exam Builder</div>
+    </div>
+    <div id="course-tab-content"></div>`;
+
+  renderLessonsTab(courseId);
+}
+
+function switchCourseTab(tab, courseId) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  if (tab === 'lessons') renderLessonsTab(courseId);
+  else renderExamBuilderTab(courseId);
+}
+
+function renderLessonsTab(courseId) {
+  const courses = DB.get('courses');
+  const course = courses.find(c => c.id === courseId);
+  document.getElementById('course-tab-content').innerHTML = `
+    <div class="section-header">
+      <div class="section-title">Lessons (${course.lessons.length})</div>
+      <button class="btn btn-primary btn-sm" onclick="openAddLessonModal('${courseId}')">+ Add Lesson</button>
+    </div>
+    ${course.lessons.length === 0 ? `<div class="empty-state"><span class="empty-icon">📝</span><h3>No lessons yet</h3><p>Add your first lesson to this course.</p></div>` : `
+    <div class="lesson-list">
+      ${course.lessons.map((l, i) => `
+        <div class="lesson-item">
+          <div class="lesson-num">${i + 1}</div>
+          <div class="lesson-item-info">
+            <div class="lesson-item-title">${l.title}</div>
+            <div class="lesson-item-type">${l.type === 'video' ? '🎬 Video' : '📄 Text'}</div>
+          </div>
+          <div style="display:flex;gap:6px">
+            <button class="btn btn-ghost btn-sm" onclick="openEditLessonModal('${courseId}','${l.id}')">Edit</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteLesson('${courseId}','${l.id}')">Del</button>
+          </div>
+        </div>
+      `).join('')}
+    </div>`}`;
+}
+
+function openAddLessonModal(courseId) {
+  openModal('Add Lesson',
+    `<div class="form-group"><label class="form-label">Lesson Title</label><input type="text" id="nl-title" class="form-control" /></div>
+     <div class="form-group"><label class="form-label">Type</label>
+       <select id="nl-type" class="form-control" onchange="toggleVideoField()">
+         <option value="text">📄 Text</option>
+         <option value="video">🎬 Video</option>
+       </select>
+     </div>
+     <div id="nl-video-field" class="form-group hidden"><label class="form-label">YouTube Embed URL</label><input type="text" id="nl-video" class="form-control" placeholder="https://www.youtube.com/embed/..." /></div>
+     <div class="form-group"><label class="form-label">Content / Description</label><textarea id="nl-content" class="form-control" rows="5" placeholder="Lesson content (supports plain text)..."></textarea></div>`,
+    `<button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+     <button class="btn btn-primary" onclick="addLesson('${courseId}')">Add Lesson</button>`
+  );
+}
+
+function toggleVideoField() {
+  const type = document.getElementById('nl-type').value;
+  document.getElementById('nl-video-field').classList.toggle('hidden', type !== 'video');
+}
+
+function addLesson(courseId) {
+  const title = document.getElementById('nl-title').value.trim();
+  const type = document.getElementById('nl-type').value;
+  const content = document.getElementById('nl-content').value.trim();
+  const videoUrl = type === 'video' ? document.getElementById('nl-video').value.trim() : '';
+  if (!title) { showToast('⚠️ Title is required'); return; }
+  const courses = DB.get('courses');
+  const idx = courses.findIndex(c => c.id === courseId);
+  courses[idx].lessons.push({ id: uid(), title, type, content, videoUrl });
+  DB.set('courses', courses);
+  closeModal();
+  showToast('✅ Lesson added');
+  renderCourseDetail({ courseId });
+}
+
+function openEditLessonModal(courseId, lessonId) {
+  const course = DB.get('courses').find(c => c.id === courseId);
+  const lesson = course.lessons.find(l => l.id === lessonId);
+  openModal('Edit Lesson',
+    `<div class="form-group"><label class="form-label">Lesson Title</label><input type="text" id="el-title" class="form-control" value="${lesson.title}" /></div>
+     <div class="form-group"><label class="form-label">Type</label>
+       <select id="el-type" class="form-control" onchange="toggleEditVideoField()">
+         <option value="text" ${lesson.type==='text'?'selected':''}>📄 Text</option>
+         <option value="video" ${lesson.type==='video'?'selected':''}>🎬 Video</option>
+       </select>
+     </div>
+     <div id="el-video-field" class="form-group ${lesson.type!=='video'?'hidden':''}"><label class="form-label">YouTube Embed URL</label><input type="text" id="el-video" class="form-control" value="${lesson.videoUrl||''}" /></div>
+     <div class="form-group"><label class="form-label">Content</label><textarea id="el-content" class="form-control" rows="5">${lesson.content||''}</textarea></div>`,
+    `<button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+     <button class="btn btn-primary" onclick="saveLesson('${courseId}','${lessonId}')">Save Changes</button>`
+  );
+}
+function toggleEditVideoField() {
+  const type = document.getElementById('el-type').value;
+  document.getElementById('el-video-field').classList.toggle('hidden', type !== 'video');
+}
+function saveLesson(courseId, lessonId) {
+  const title = document.getElementById('el-title').value.trim();
+  const type = document.getElementById('el-type').value;
+  const content = document.getElementById('el-content').value.trim();
+  const videoUrl = type === 'video' ? document.getElementById('el-video').value.trim() : '';
+  const courses = DB.get('courses');
+  const cIdx = courses.findIndex(c => c.id === courseId);
+  const lIdx = courses[cIdx].lessons.findIndex(l => l.id === lessonId);
+  courses[cIdx].lessons[lIdx] = { ...courses[cIdx].lessons[lIdx], title, type, content, videoUrl };
+  DB.set('courses', courses);
+  closeModal();
+  showToast('✅ Lesson updated');
+  renderCourseDetail({ courseId });
+}
+function deleteLesson(courseId, lessonId) {
+  if (!confirm('Delete this lesson?')) return;
+  const courses = DB.get('courses');
+  const idx = courses.findIndex(c => c.id === courseId);
+  courses[idx].lessons = courses[idx].lessons.filter(l => l.id !== lessonId);
+  DB.set('courses', courses);
+  showToast('🗑️ Lesson deleted');
+  renderCourseDetail({ courseId });
+}
+
+/* ─── EXAM BUILDER ─── */
+let examDraft = null;
+
+function renderExamBuilderTab(courseId) {
+  const course = DB.get('courses').find(c => c.id === courseId);
+  examDraft = course.exam ? JSON.parse(JSON.stringify(course.exam)) : { id: uid(), title: course.title + ' Exam', questions: [] };
+
+  const renderQuestions = () => examDraft.questions.map((q, qi) => `
+    <div class="question-builder">
+      <div class="question-builder-header">
+        <strong>Q${qi + 1} — ${q.type === 'mcq' ? 'Multiple Choice' : 'Open Answer'}</strong>
+        <button class="btn btn-danger btn-sm" onclick="removeQuestion(${qi}, '${courseId}')">Remove</button>
+      </div>
+      <div class="form-group"><label class="form-label">Question Text</label>
+        <input type="text" class="form-control" value="${q.text}" onchange="updateQuestion(${qi},'text',this.value,'${courseId}')" />
+      </div>
+      ${q.type === 'mcq' ? `
+      <label class="form-label">Options (check the correct one)</label>
+      ${q.options.map((opt, oi) => `
+        <div class="option-builder">
+          <input type="radio" name="correct_${qi}" ${q.correct === oi ? 'checked' : ''} onchange="updateQuestion(${qi},'correct',${oi},'${courseId}')" />
+          <input type="text" class="form-control" value="${opt}" placeholder="Option ${oi+1}" onchange="updateOption(${qi},${oi},this.value,'${courseId}')" />
+          ${q.options.length > 2 ? `<button class="btn btn-ghost btn-sm" onclick="removeOption(${qi},${oi},'${courseId}')">✕</button>` : ''}
+        </div>
+      `).join('')}
+      ${q.options.length < 6 ? `<button class="btn btn-ghost btn-sm mt-2" onclick="addOption(${qi},'${courseId}')">+ Add Option</button>` : ''}
+      ` : `<p class="text-sm text-gray mt-1">Students will type a free-form answer. Manually reviewed.</p>`}
+    </div>
+  `).join('');
+
+  document.getElementById('course-tab-content').innerHTML = `
+    <div class="section-header">
+      <div class="section-title">Exam Builder</div>
+      <button class="btn btn-primary btn-sm" onclick="saveExam('${courseId}')">💾 Save Exam</button>
+    </div>
+    <div class="card" style="margin-bottom:20px">
+      <div class="form-group"><label class="form-label">Exam Title</label>
+        <input type="text" id="exam-title-input" class="form-control" value="${examDraft.title}" onchange="examDraft.title=this.value" />
+      </div>
+    </div>
+    <div id="questions-list">${renderQuestions()}</div>
+    <div style="display:flex;gap:10px;margin-top:8px">
+      <button class="btn btn-secondary btn-sm" onclick="addQuestion('mcq','${courseId}')">+ Multiple Choice</button>
+      <button class="btn btn-outline btn-sm" onclick="addQuestion('open','${courseId}')">+ Open Answer</button>
+    </div>`;
+}
+
+function addQuestion(type, courseId) {
+  examDraft.questions.push(type === 'mcq'
+    ? { id: uid(), type: 'mcq', text: '', options: ['', '', '', ''], correct: 0 }
+    : { id: uid(), type: 'open', text: '' });
+  renderExamBuilderTab(courseId);
+}
+function removeQuestion(qi, courseId) {
+  examDraft.questions.splice(qi, 1);
+  renderExamBuilderTab(courseId);
+}
+function updateQuestion(qi, field, val, courseId) {
+  examDraft.questions[qi][field] = val;
+}
+function updateOption(qi, oi, val) {
+  examDraft.questions[qi].options[oi] = val;
+}
+function addOption(qi, courseId) {
+  examDraft.questions[qi].options.push('');
+  renderExamBuilderTab(courseId);
+}
+function removeOption(qi, oi, courseId) {
+  examDraft.questions[qi].options.splice(oi, 1);
+  if (examDraft.questions[qi].correct >= examDraft.questions[qi].options.length) examDraft.questions[qi].correct = 0;
+  renderExamBuilderTab(courseId);
+}
+function saveExam(courseId) {
+  examDraft.title = document.getElementById('exam-title-input').value.trim() || examDraft.title;
+  // sync current text fields
+  document.querySelectorAll('#questions-list input[type=text], #questions-list textarea').forEach((el, i) => {});
+  const courses = DB.get('courses');
+  const idx = courses.findIndex(c => c.id === courseId);
+  courses[idx].exam = examDraft;
+  DB.set('courses', courses);
+  showToast('✅ Exam saved');
+}
+
+/* ═══════════════════════════════════════════════
+   PAGE: MY COURSES (Student)
+═══════════════════════════════════════════════ */
+function renderMyCourses() {
+  document.getElementById('topbar-title').textContent = 'My Courses';
+  document.getElementById('topbar-actions').innerHTML = '';
+  const enrollments = DB.get('enrollments').filter(e => e.studentId === currentUser.id);
+  const courses = DB.get('courses');
+  const results = DB.get('exam_results').filter(r => r.studentId === currentUser.id);
+
+  const enrolled = enrollments.map(e => {
+    const c = courses.find(x => x.id === e.courseId);
+    const total = c ? c.lessons.length : 0;
+    const done = e.completedLessons.length;
+    const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+    const result = results.find(r => r.courseId === e.courseId);
+    return { ...e, course: c, total, done, pct, result };
+  }).filter(e => e.course);
+
+  document.getElementById('page-content').innerHTML = enrolled.length === 0
+    ? `<div class="empty-state"><span class="empty-icon">📚</span><h3>No courses yet</h3><p>Ask your teacher to enroll you in a course.</p></div>`
+    : `<div class="courses-grid">${enrolled.map(e => `
+        <div class="course-card" onclick="navigate('course-detail', {courseId:'${e.course.id}'})">
+          <div class="course-card-thumb">${e.course.icon || '📚'}</div>
+          <div class="course-card-body">
+            <div class="course-card-title">${e.course.title}</div>
+            <div class="course-card-desc">${e.course.description}</div>
+            <div style="margin-top:12px">
+              <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+                <span class="text-sm text-gray">Progress</span>
+                <span class="text-sm font-bold">${e.pct}%</span>
+              </div>
+              <div class="progress-bar"><div class="progress-fill" style="width:${e.pct}%"></div></div>
+            </div>
+            <div class="course-card-meta">
+              <div class="course-meta-item"><strong>${e.done}</strong>/${e.total} lessons</div>
+              ${e.result ? `<span class="badge badge-green">Exam: ${e.result.score}%</span>` : (e.course.exam ? `<span class="badge badge-orange">Exam pending</span>` : '')}
+            </div>
+          </div>
+        </div>
+      `).join('')}</div>`;
+}
+
+/* ═══════════════════════════════════════════════
+   PAGE: LESSON VIEW (Student)
+═══════════════════════════════════════════════ */
+function renderLessonView({ courseId, lessonId }) {
+  const course = DB.get('courses').find(c => c.id === courseId);
+  if (!course) return;
+  const lessonIndex = lessonId ? course.lessons.findIndex(l => l.id === lessonId) : 0;
+  const lesson = course.lessons[lessonIndex];
+  if (!lesson) return;
+
+  document.getElementById('topbar-title').textContent = course.title;
+  document.getElementById('topbar-actions').innerHTML = `<button class="btn btn-ghost btn-sm" onclick="navigate('course-detail', {courseId:'${courseId}'})">← Back to Course</button>`;
+
+  // Mark lesson complete
+  const enrollments = DB.get('enrollments');
+  const eIdx = enrollments.findIndex(e => e.studentId === currentUser.id && e.courseId === courseId);
+  if (eIdx > -1 && !enrollments[eIdx].completedLessons.includes(lesson.id)) {
+    enrollments[eIdx].completedLessons.push(lesson.id);
+    DB.set('enrollments', enrollments);
+  }
+
+  const prev = lessonIndex > 0 ? course.lessons[lessonIndex - 1] : null;
+  const next = lessonIndex < course.lessons.length - 1 ? course.lessons[lessonIndex + 1] : null;
+  const enrollment = DB.get('enrollments').find(e => e.studentId === currentUser.id && e.courseId === courseId);
+  const allDone = course.lessons.every(l => enrollment && enrollment.completedLessons.includes(l.id));
+
+  document.getElementById('page-content').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 280px;gap:24px;align-items:start">
+      <div>
+        <div class="lesson-viewer">
+          <div class="flex items-center gap-2 mt-0" style="margin-bottom:8px">
+            <span class="badge ${lesson.type==='video'?'badge-black':'badge-orange'}">${lesson.type==='video'?'🎬 Video':'📄 Text'}</span>
+            <span class="text-sm text-gray">Lesson ${lessonIndex+1} of ${course.lessons.length}</span>
+          </div>
+          <h2>${lesson.title}</h2>
+          ${lesson.type === 'video' ? `
+            <div class="video-embed">
+              ${lesson.videoUrl ? `<iframe src="${lesson.videoUrl}" allowfullscreen></iframe>` : `
+              <div class="video-placeholder"><span class="play-icon">▶</span><p>No video URL provided</p></div>`}
+            </div>
+            ${lesson.content ? `<div class="lesson-text-content" style="margin-top:16px">${lesson.content}</div>` : ''}
+          ` : `<div class="lesson-text-content">${formatContent(lesson.content)}</div>`}
+          <div class="lesson-nav">
+            ${prev ? `<button class="btn btn-ghost" onclick="navigate('lesson-view',{courseId:'${courseId}',lessonId:'${prev.id}'})">← ${prev.title}</button>` : '<div></div>'}
+            ${next ? `<button class="btn btn-primary" onclick="navigate('lesson-view',{courseId:'${courseId}',lessonId:'${next.id}'})">Next: ${next.title} →</button>`
+              : (course.exam && allDone ? `<button class="btn btn-primary" onclick="navigate('exam-view',{courseId:'${courseId}'})">Take Exam →</button>` : `<span class="badge badge-green">✓ Course Complete</span>`)}
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="card" style="padding:0;overflow:hidden">
+          <div style="padding:16px 18px;border-bottom:1.5px solid var(--gray-200)"><strong style="font-size:14px">Course Contents</strong></div>
+          <div class="lesson-list" style="border:none;border-radius:0">
+            ${course.lessons.map((l, i) => `
+              <div class="lesson-item ${l.id === lesson.id ? 'active' : ''}" onclick="navigate('lesson-view',{courseId:'${courseId}',lessonId:'${l.id}'})">
+                <div class="lesson-num">${enrollment && enrollment.completedLessons.includes(l.id) ? '✓' : i+1}</div>
+                <div class="lesson-item-info">
+                  <div class="lesson-item-title">${l.title}</div>
+                  <div class="lesson-item-type">${l.type==='video'?'🎬 Video':'📄 Text'}</div>
+                </div>
+              </div>
+            `).join('')}
+            ${course.exam ? `
+              <div class="lesson-item ${allDone?'':''}${!allDone?' opacity:0.5':''}" onclick="${allDone?`navigate('exam-view',{courseId:'${courseId}'})`:''}">
+                <div class="lesson-num" style="background:var(--orange);color:white">✍</div>
+                <div class="lesson-item-info">
+                  <div class="lesson-item-title">${course.exam.title}</div>
+                  <div class="lesson-item-type">${allDone?'Ready to take':'Complete all lessons first'}</div>
+                </div>
+              </div>` : ''}
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function formatContent(text) {
+  if (!text) return '<p class="text-gray">No content provided.</p>';
+  return text.split('\n').map(line => {
+    if (line.startsWith('**') && line.endsWith('**')) return `<strong>${line.slice(2,-2)}</strong>`;
+    if (line.startsWith('```')) return '';
+    if (line.trim() === '') return '<br>';
+    return `<p style="margin-bottom:10px">${line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/`(.*?)`/g, '<code style="background:#f5f5f5;padding:2px 6px;border-radius:3px;font-family:monospace">$1</code>')}</p>`;
+  }).join('');
+}
+
+/* ═══════════════════════════════════════════════
+   PAGE: COURSE DETAIL (Student view)
+═══════════════════════════════════════════════ */
+function renderCourseDetail({ courseId }) {
+  const course = DB.get('courses').find(c => c.id === courseId);
+  if (!course) { navigate(currentUser.role === 'admin' ? 'courses' : 'my-courses'); return; }
+
+  if (currentUser.role === 'admin') {
+    document.getElementById('topbar-title').textContent = course.title;
+    document.getElementById('topbar-actions').innerHTML = `
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-ghost btn-sm" onclick="navigate('courses')">← Back</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteCourse('${courseId}')">Delete Course</button>
+      </div>`;
+    document.getElementById('page-content').innerHTML = `
+      <div class="tabs">
+        <div class="tab active" id="tab-lessons" onclick="switchCourseTab('lessons','${courseId}')">Lessons</div>
+        <div class="tab" id="tab-exam" onclick="switchCourseTab('exam','${courseId}')">Exam Builder</div>
+      </div>
+      <div id="course-tab-content"></div>`;
+    renderLessonsTab(courseId);
+  } else {
+    const enrollment = DB.get('enrollments').find(e => e.studentId === currentUser.id && e.courseId === courseId);
+    const result = DB.get('exam_results').find(r => r.studentId === currentUser.id && r.courseId === courseId);
+    const total = course.lessons.length;
+    const done = enrollment ? enrollment.completedLessons.length : 0;
+    const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+
+    document.getElementById('topbar-title').textContent = course.title;
+    document.getElementById('topbar-actions').innerHTML = `<button class="btn btn-ghost btn-sm" onclick="navigate('my-courses')">← My Courses</button>`;
+
+    document.getElementById('page-content').innerHTML = `
+      <div class="course-detail-layout">
+        <div>
+          <div class="card" style="margin-bottom:20px">
+            <div class="card-title">${course.title}</div>
+            <p style="color:var(--gray-600);margin-top:8px;font-size:14px">${course.description}</p>
+            <div style="margin-top:16px">
+              <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+                <span class="text-sm text-gray">Overall Progress</span>
+                <span class="text-sm font-bold">${pct}% (${done}/${total})</span>
+              </div>
+              <div class="progress-bar" style="height:8px"><div class="progress-fill" style="width:${pct}%"></div></div>
+            </div>
+          </div>
+          <div class="section-title" style="margin-bottom:12px">Lessons</div>
+          <div class="lesson-list">
+            ${course.lessons.map((l, i) => `
+              <div class="lesson-item" onclick="navigate('lesson-view',{courseId:'${courseId}',lessonId:'${l.id}'})">
+                <div class="lesson-num" style="${enrollment && enrollment.completedLessons.includes(l.id) ? 'background:var(--orange);color:white' : ''}">${enrollment && enrollment.completedLessons.includes(l.id) ? '✓' : i+1}</div>
+                <div class="lesson-item-info">
+                  <div class="lesson-item-title">${l.title}</div>
+                  <div class="lesson-item-type">${l.type==='video'?'🎬 Video Lesson':'📄 Text Lesson'}</div>
+                </div>
+                <span style="color:var(--gray-400);font-size:18px">›</span>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+        <div class="course-sidebar-card">
+          <div class="course-sidebar-thumb">${course.icon || '📚'}</div>
+          <div class="course-sidebar-info">
+            <h3>${course.title}</h3>
+            <div style="margin-top:12px;display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;justify-content:space-between;font-size:13px">
+                <span class="text-gray">Lessons</span><strong>${total}</strong>
+              </div>
+              <div style="display:flex;justify-content:space-between;font-size:13px">
+                <span class="text-gray">Progress</span><strong>${pct}%</strong>
+              </div>
+              <div style="display:flex;justify-content:space-between;font-size:13px">
+                <span class="text-gray">Exam</span><strong>${course.exam ? 'Yes' : 'No'}</strong>
+              </div>
+              ${result ? `<div style="display:flex;justify-content:space-between;font-size:13px">
+                <span class="text-gray">Your Score</span><strong class="text-orange">${result.score}%</strong>
+              </div>` : ''}
+            </div>
+            <div style="margin-top:16px">
+              ${course.lessons.length > 0 ? `<button class="btn btn-primary w-full" onclick="navigate('lesson-view',{courseId:'${courseId}',lessonId:'${course.lessons[0].id}'})">
+                ${done > 0 ? 'Continue Learning →' : 'Start Course →'}
+              </button>` : ''}
+              ${course.exam && pct === 100 && !result ? `<button class="btn btn-secondary w-full" style="margin-top:8px" onclick="navigate('exam-view',{courseId:'${courseId}'})">Take Exam →</button>` : ''}
+              ${result ? `<div class="badge badge-green w-full" style="text-align:center;padding:10px;margin-top:8px;display:block">✓ Exam Completed: ${result.score}%</div>` : ''}
+            </div>
+          </div>
+        </div>
+      </div>`;
+  }
+}
+
+function deleteCourse(courseId) {
+  if (!confirm('Delete this course? All enrollments for this course will also be removed.')) return;
+  DB.set('courses', DB.get('courses').filter(c => c.id !== courseId));
+  DB.set('enrollments', DB.get('enrollments').filter(e => e.courseId !== courseId));
+  DB.set('exam_results', DB.get('exam_results').filter(r => r.courseId !== courseId));
+  showToast('🗑️ Course deleted');
+  navigate('courses');
+}
+
+/* ═══════════════════════════════════════════════
+   PAGE: EXAM VIEW (Student)
+═══════════════════════════════════════════════ */
+let examAnswers = {};
+let examSubmitted = false;
+
+function renderExamView({ courseId }) {
+  const course = DB.get('courses').find(c => c.id === courseId);
+  if (!course || !course.exam) { navigate('my-courses'); return; }
+
+  const existing = DB.get('exam_results').find(r => r.studentId === currentUser.id && r.courseId === courseId);
+  if (existing) { showExamResult(course, existing); return; }
+
+  examAnswers = {};
+  examSubmitted = false;
+  document.getElementById('topbar-title').textContent = 'Exam';
+  document.getElementById('topbar-actions').innerHTML = `<button class="btn btn-ghost btn-sm" onclick="navigate('course-detail',{courseId:'${courseId}'})">← Back to Course</button>`;
+
+  const exam = course.exam;
+  document.getElementById('page-content').innerHTML = `
+    <div class="exam-wrap">
+      <div class="exam-header">
+        <div>
+          <div class="exam-title">${exam.title}</div>
+          <div class="exam-meta">${exam.questions.length} questions · ${course.title}</div>
+        </div>
+        <div class="exam-progress">
+          <div class="exam-progress-val" id="exam-progress-val">0</div>
+          <div class="exam-progress-label">answered</div>
+        </div>
+      </div>
+      <div id="exam-questions">
+        ${exam.questions.map((q, qi) => `
+          <div class="question-card" id="qcard-${qi}">
+            <div class="question-num">Question ${qi + 1} of ${exam.questions.length}</div>
+            <div class="question-text">${q.text || '(No question text)'}</div>
+            ${q.type === 'mcq' ? `
+              <div class="option-list">
+                ${q.options.map((opt, oi) => `
+                  <div class="option-item" id="opt-${qi}-${oi}" onclick="selectOption(${qi}, ${oi}, '${courseId}')">
+                    <div class="option-radio" id="radio-${qi}-${oi}"></div>
+                    <span>${opt}</span>
+                  </div>
+                `).join('')}
+              </div>` : `
+              <textarea class="open-answer" placeholder="Type your answer here..." oninput="updateOpenAnswer(${qi}, this.value, '${courseId}')"></textarea>`}
+          </div>
+        `).join('')}
+      </div>
+      <div style="text-align:center;padding:20px 0">
+        <button class="btn btn-primary btn-lg" onclick="submitExam('${courseId}')">Submit Exam →</button>
+        <p class="text-sm text-gray mt-2">Make sure you've answered all questions before submitting.</p>
+      </div>
+    </div>`;
+}
+
+function selectOption(qi, oi, courseId) {
+  const exam = DB.get('courses').find(c => c.id === courseId).exam;
+  const q = exam.questions[qi];
+  // deselect all
+  q.options.forEach((_, i) => {
+    const el = document.getElementById(`opt-${qi}-${i}`);
+    if (el) el.classList.remove('selected');
+  });
+  const selected = document.getElementById(`opt-${qi}-${oi}`);
+  if (selected) selected.classList.add('selected');
+  examAnswers[qi] = oi;
+  updateExamProgress(exam.questions.length);
+}
+
+function updateOpenAnswer(qi, val, courseId) {
+  examAnswers[qi] = val;
+  const exam = DB.get('courses').find(c => c.id === courseId).exam;
+  updateExamProgress(exam.questions.length);
+}
+
+function updateExamProgress(total) {
+  const answered = Object.keys(examAnswers).length;
+  const el = document.getElementById('exam-progress-val');
+  if (el) el.textContent = answered;
+}
+
+function submitExam(courseId) {
+  const course = DB.get('courses').find(c => c.id === courseId);
+  const exam = course.exam;
+  const mcqQuestions = exam.questions.filter(q => q.type === 'mcq');
+  if (mcqQuestions.length > 0) {
+    const unansweredMCQ = mcqQuestions.filter((q, qi) => examAnswers[exam.questions.indexOf(q)] === undefined);
+    if (unansweredMCQ.length > 0) {
+      showToast('⚠️ Please answer all multiple choice questions');
+      return;
+    }
+  }
+
+  let correct = 0;
+  exam.questions.forEach((q, qi) => {
+    if (q.type === 'mcq' && examAnswers[qi] === q.correct) correct++;
+  });
+
+  const mcqCount = mcqQuestions.length;
+  const score = mcqCount > 0 ? Math.round((correct / mcqCount) * 100) : 100;
+
+  const result = {
+    id: uid(), studentId: currentUser.id, courseId,
+    score, correct, total: mcqCount,
+    answers: examAnswers, submittedAt: Date.now()
+  };
+  const results = DB.get('exam_results');
+  results.push(result);
+  DB.set('exam_results', results);
+
+  showExamResult(course, result);
+}
+
+function showExamResult(course, result) {
+  document.getElementById('topbar-title').textContent = 'Exam Result';
+  document.getElementById('topbar-actions').innerHTML = `<button class="btn btn-ghost btn-sm" onclick="navigate('course-detail',{courseId:'${course.id}'})">← Back to Course</button>`;
+
+  const passed = result.score >= 60;
+  document.getElementById('page-content').innerHTML = `
+    <div class="exam-wrap">
+      <div class="exam-result">
+        <div style="font-size:48px;margin-bottom:8px">${passed ? '🎉' : '📚'}</div>
+        <div class="result-score">${result.score}%</div>
+        <div class="result-label">${result.correct} / ${result.total} MCQ correct</div>
+        <div class="result-message">${passed ? 'Congratulations, you passed!' : 'Keep studying and try again!'}</div>
+        <div style="margin-top:28px;display:flex;gap:12px;justify-content:center">
+          <button class="btn btn-secondary" onclick="navigate('course-detail',{courseId:'${course.id}'})">← Back to Course</button>
+          <button class="btn btn-primary" onclick="navigate('my-courses')">My Courses</button>
+        </div>
+      </div>
+
+      ${course.exam.questions.length > 0 ? `
+      <div style="margin-top:28px">
+        <div class="section-title" style="margin-bottom:16px">Review</div>
+        ${course.exam.questions.map((q, qi) => {
+          const userAns = result.answers[qi];
+          const isCorrect = q.type === 'mcq' ? userAns === q.correct : null;
+          return `<div class="question-card">
+            <div class="question-num">Q${qi+1} — ${q.type === 'mcq' ? 'Multiple Choice' : 'Open Answer'}</div>
+            <div class="question-text">${q.text}</div>
+            ${q.type === 'mcq' ? `<div class="option-list">
+              ${q.options.map((opt, oi) => {
+                let cls = '';
+                if (oi === q.correct) cls = 'correct';
+                else if (oi === userAns && userAns !== q.correct) cls = 'wrong';
+                return `<div class="option-item ${cls}" style="cursor:default">
+                  <div class="option-radio" ${oi === userAns ? 'style="border-color:var(--orange);background:var(--orange)"' : ''}></div>
+                  <span>${opt}</span>
+                  ${oi === q.correct ? ' <span style="margin-left:auto;color:#25a244;font-size:13px;font-weight:600">✓ Correct</span>' : ''}
+                </div>`;
+              }).join('')}
+            </div>` : `
+            <div style="background:var(--gray-100);border-radius:6px;padding:12px;font-size:14px;color:var(--gray-600)">
+              <strong style="color:var(--black)">Your answer:</strong><br>${userAns || '<em>No answer provided</em>'}
+              <br><span class="badge badge-gray" style="margin-top:8px">Reviewed by instructor</span>
+            </div>`}
+          </div>`;
+        }).join('')}
+      </div>` : ''}
+    </div>`;
+}
+
+/* ═══════════════════════════════════════════════
+   BOOT
+═══════════════════════════════════════════════ */
+seedData();
+</script>
+</body>
+</html>
