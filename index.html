@@ -358,6 +358,29 @@
   .type-online { background: #e8f0fe; color: #2563eb; }
   .type-onsite { background: var(--orange-light); color: var(--orange); }
 
+  /* ─── REPORTS ──────────────────────────────────── */
+  .report-student-card {
+    background: var(--white); border: 1.5px solid var(--gray-200); border-radius: 8px;
+    overflow: hidden; transition: box-shadow .2s, transform .15s; cursor: pointer;
+  }
+  .report-student-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
+  .report-header-strip { height: 6px; background: var(--orange); }
+  .report-student-body { padding: 18px; }
+  .report-student-name { font-family: var(--font-display); font-size: 20px; letter-spacing: .3px; }
+  .report-student-email { font-size: 12px; color: var(--gray-600); margin-top: 2px; }
+  .report-kpi-row { display: flex; gap: 12px; margin-top: 14px; }
+  .report-kpi { flex: 1; background: var(--gray-100); border-radius: 6px; padding: 10px 12px; text-align: center; }
+  .report-kpi-val { font-family: var(--font-display); font-size: 24px; letter-spacing: .5px; color: var(--black); }
+  .report-kpi-label { font-size: 10px; font-weight: 700; letter-spacing: .6px; text-transform: uppercase; color: var(--gray-400); margin-top: 2px; }
+  .risk-flag { display: flex; align-items: center; gap: 6px; margin-top: 10px; padding: 7px 10px; background: #fff5f5; border: 1.5px solid #feb2b2; border-radius: 6px; font-size: 12px; color: #c53030; font-weight: 600; }
+  .report-detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px; }
+  .report-section-title { font-family: var(--font-display); font-size: 20px; letter-spacing: .5px; margin-bottom: 12px; }
+  .open-answer-review { background: var(--gray-100); border-radius: 6px; padding: 16px; margin-top: 10px; border-left: 3px solid var(--orange); }
+  .open-answer-review .q-text { font-size: 14px; font-weight: 600; color: var(--black); margin-bottom: 8px; }
+  .open-answer-review .a-text { font-size: 14px; color: var(--gray-600); font-style: italic; }
+  .grade-select { padding: 4px 10px; border: 1.5px solid var(--gray-200); border-radius: var(--radius); font-family: var(--font-body); font-size: 13px; font-weight: 600; outline: none; background: var(--white); cursor: pointer; color: var(--black); }
+  .grade-select:focus { border-color: var(--orange); }
+
   /* ─── CERTIFICATE ──────────────────────────────── */
   .cert-badge {
     display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px;
@@ -458,7 +481,7 @@ function genCode() {
 }
 
 /* ─── SEED ─── */
-const DATA_VERSION = 'v4'; // bump this whenever seed data changes
+const DATA_VERSION = 'v5'; // bump this whenever seed data changes
 function seedData() {
   if (localStorage.getItem('lf_data_version') === DATA_VERSION) return;
   // clear all old keys so stale data never blocks new seed
@@ -564,7 +587,9 @@ function navigate(route, params = {}) {
     'exam-view':      renderExamView,
     'my-courses':     renderMyCourses,
     attendance:       renderAttendancePage,
-    'check-in':       renderCheckIn
+    'check-in':       renderCheckIn,
+    reports:          renderReports,
+    'student-report': renderStudentReport
   };
   document.querySelectorAll('.nav-item').forEach(el => {
     el.classList.toggle('active', el.dataset.route === route);
@@ -588,7 +613,8 @@ function buildSidebar() {
       { section: 'Manage' },
       { route: 'students',   icon: '👥', label: 'Students' },
       { route: 'courses',    icon: '📚', label: 'Courses' },
-      { route: 'attendance', icon: '📋', label: 'Attendance' }
+      { route: 'attendance', icon: '📋', label: 'Attendance' },
+      { route: 'reports',    icon: '📈', label: 'Reports' }
     ];
   } else if (isOnsite) {
     items = [
@@ -2060,6 +2086,444 @@ function openCertificate(studentId, courseId) {
   const blob = new Blob([html], { type: 'text/html' });
   const url  = URL.createObjectURL(blob);
   window.open(url, '_blank');
+}
+
+/* ═══════════════════════════════════════════════
+   PAGE: REPORTS (Admin)
+═══════════════════════════════════════════════ */
+
+/* ── Reports index — card per student ── */
+function renderReports() {
+  document.getElementById('topbar-title').textContent = 'Student Reports';
+  document.getElementById('topbar-actions').innerHTML = '';
+
+  const students    = DB.get('users').filter(u => u.role === 'student');
+  const courses     = DB.get('courses');
+  const enrollments = DB.get('enrollments');
+  const results     = DB.get('exam_results');
+  const certs       = DB.get('certificates');
+
+  if (students.length === 0) {
+    document.getElementById('page-content').innerHTML = `<div class="empty-state"><span class="empty-icon">📈</span><h3>No students yet</h3><p>Add students to view reports.</p></div>`;
+    return;
+  }
+
+  // Build summary per student
+  const summaries = students.map(s => {
+    const sEnroll  = enrollments.filter(e => e.studentId === s.id);
+    const sResults = results.filter(r => r.studentId === s.id);
+    const sCerts   = certs.filter(c => c.studentId === s.id);
+
+    // Avg exam score
+    const avgScore = sResults.length
+      ? Math.round(sResults.reduce((a, r) => a + r.score, 0) / sResults.length)
+      : null;
+
+    // Avg attendance (onsite only)
+    let avgAtt = null;
+    if (s.type === 'onsite' && sEnroll.length > 0) {
+      const atts = sEnroll.map(e => getStudentAttendance(s.id, e.courseId).pct);
+      avgAtt = Math.round(atts.reduce((a, v) => a + v, 0) / atts.length);
+    }
+
+    // Lesson completion % (online)
+    let lessonPct = null;
+    if (s.type === 'online' && sEnroll.length > 0) {
+      const pcts = sEnroll.map(e => {
+        const c = courses.find(x => x.id === e.courseId);
+        if (!c || c.lessons.length === 0) return 0;
+        return Math.round((e.completedLessons.length / c.lessons.length) * 100);
+      });
+      lessonPct = Math.round(pcts.reduce((a, v) => a + v, 0) / pcts.length);
+    }
+
+    // At-risk flags
+    const risks = [];
+    if (avgScore !== null && avgScore < 60) risks.push('Low exam score');
+    if (avgAtt !== null) {
+      const minThresh = Math.min(...sEnroll.map(e => {
+        const c = courses.find(x => x.id === e.courseId);
+        return c ? (c.attendanceThreshold || 75) : 75;
+      }));
+      if (avgAtt < minThresh) risks.push('Below attendance threshold');
+    }
+
+    return { student: s, sEnroll, sResults, sCerts, avgScore, avgAtt, lessonPct, risks };
+  });
+
+  // Sort: at-risk first, then alphabetical
+  summaries.sort((a, b) => b.risks.length - a.risks.length || a.student.name.localeCompare(b.student.name));
+
+  const atRiskCount = summaries.filter(s => s.risks.length > 0).length;
+
+  document.getElementById('page-content').innerHTML = `
+    <div class="stats-grid" style="margin-bottom:24px">
+      <div class="stat-card accent">
+        <div class="stat-label">Total Students</div>
+        <div class="stat-value">${students.length}</div>
+        <div class="stat-sub">In the system</div>
+      </div>
+      <div class="stat-card ${atRiskCount > 0 ? 'accent' : ''}">
+        <div class="stat-label">At Risk</div>
+        <div class="stat-value" style="${atRiskCount > 0 ? '' : 'color:var(--gray-400)'}">${atRiskCount}</div>
+        <div class="stat-sub">Need attention</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Certificates Issued</div>
+        <div class="stat-value">${certs.length}</div>
+        <div class="stat-sub">Completions</div>
+      </div>
+    </div>
+    <div class="courses-grid">
+      ${summaries.map(s => `
+        <div class="report-student-card" onclick="navigate('student-report',{studentId:'${s.student.id}'})">
+          <div class="report-header-strip" style="${s.risks.length > 0 ? 'background:#e53e3e' : ''}"></div>
+          <div class="report-student-body">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start">
+              <div>
+                <div class="report-student-name">${s.student.name}</div>
+                <div class="report-student-email">${s.student.email}</div>
+              </div>
+              <span class="type-pill type-${s.student.type}">${s.student.type === 'online' ? '💻' : '🏫'} ${s.student.type}</span>
+            </div>
+            <div class="report-kpi-row">
+              <div class="report-kpi">
+                <div class="report-kpi-val">${s.sEnroll.length}</div>
+                <div class="report-kpi-label">Courses</div>
+              </div>
+              <div class="report-kpi">
+                <div class="report-kpi-val" style="${s.avgScore !== null && s.avgScore < 60 ? 'color:#e53e3e' : ''}">${s.avgScore !== null ? s.avgScore + '%' : '—'}</div>
+                <div class="report-kpi-label">Avg Score</div>
+              </div>
+              <div class="report-kpi">
+                <div class="report-kpi-val" style="${s.student.type === 'onsite' && s.avgAtt !== null ? `color:${s.avgAtt < 75 ? '#e53e3e' : '#25a244'}` : ''}">
+                  ${s.student.type === 'onsite' ? (s.avgAtt !== null ? s.avgAtt + '%' : '—') : (s.lessonPct !== null ? s.lessonPct + '%' : '—')}
+                </div>
+                <div class="report-kpi-label">${s.student.type === 'onsite' ? 'Attendance' : 'Lessons'}</div>
+              </div>
+              <div class="report-kpi">
+                <div class="report-kpi-val" style="${s.sCerts.length > 0 ? 'color:#25a244' : ''}">${s.sCerts.length > 0 ? '✓' : '—'}</div>
+                <div class="report-kpi-label">Cert</div>
+              </div>
+            </div>
+            ${s.risks.length > 0 ? `<div class="risk-flag">⚠ ${s.risks.join(' · ')}</div>` : ''}
+          </div>
+        </div>`).join('')}
+    </div>`;
+}
+
+/* ── Individual student report ── */
+function renderStudentReport({ studentId }) {
+  const student     = DB.get('users').find(u => u.id === studentId);
+  if (!student) { navigate('reports'); return; }
+
+  const courses     = DB.get('courses');
+  const enrollments = DB.get('enrollments').filter(e => e.studentId === studentId);
+  const results     = DB.get('exam_results').filter(r => r.studentId === studentId);
+  const certs       = DB.get('certificates').filter(c => c.studentId === studentId);
+  const grades      = DB.getObj('open_grades', {});  // { resultId_qi: 'Pass'|'Fail'|'Good' }
+
+  document.getElementById('topbar-title').textContent = `Report — ${student.name}`;
+  document.getElementById('topbar-actions').innerHTML = `
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-ghost btn-sm" onclick="navigate('reports')">← All Reports</button>
+      <button class="btn btn-primary btn-sm" onclick="openPrintableReport('${studentId}')">🖨️ Print Report</button>
+    </div>`;
+
+  const enrolled = enrollments.map(e => {
+    const c       = courses.find(x => x.id === e.courseId);
+    if (!c) return null;
+    const result  = results.find(r => r.courseId === e.courseId);
+    const att     = student.type === 'onsite' ? getStudentAttendance(studentId, e.courseId) : null;
+    const cert    = certs.find(x => x.courseId === e.courseId);
+    const total   = c.lessons.length;
+    const done    = e.completedLessons.length;
+    const lessonPct = total > 0 ? Math.round((done / total) * 100) : 0;
+    const threshold = c.attendanceThreshold || 75;
+    const risks = [];
+    if (result && result.score < 60) risks.push('Failed exam');
+    if (att && att.pct < threshold) risks.push(`Attendance ${att.pct}% < ${threshold}%`);
+    if (!result && student.type === 'online' && lessonPct === 100) risks.push('Exam not taken');
+    return { course: c, enrollment: e, result, att, cert, lessonPct, risks, threshold };
+  }).filter(Boolean);
+
+  const html = `
+    <!-- Profile header -->
+    <div class="card" style="margin-bottom:24px">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px">
+        <div style="display:flex;align-items:center;gap:16px">
+          <div class="sidebar-avatar" style="width:52px;height:52px;font-size:22px;flex-shrink:0">${student.name.charAt(0)}</div>
+          <div>
+            <div style="font-family:var(--font-display);font-size:28px;letter-spacing:.5px">${student.name}</div>
+            <div style="color:var(--gray-600);font-size:13px">${student.email}</div>
+            <div style="margin-top:4px"><span class="type-pill type-${student.type}">${student.type === 'online' ? '💻 Online' : '🏫 On-site'}</span></div>
+          </div>
+        </div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          <div class="report-kpi" style="min-width:80px">
+            <div class="report-kpi-val">${enrolled.length}</div>
+            <div class="report-kpi-label">Courses</div>
+          </div>
+          <div class="report-kpi" style="min-width:80px">
+            <div class="report-kpi-val">${results.length}</div>
+            <div class="report-kpi-label">Exams</div>
+          </div>
+          <div class="report-kpi" style="min-width:80px">
+            <div class="report-kpi-val" style="${certs.length > 0 ? 'color:#25a244' : 'color:var(--gray-400)'}">${certs.length}</div>
+            <div class="report-kpi-label">Certs</div>
+          </div>
+          ${student.type === 'onsite' ? `<div class="report-kpi" style="min-width:80px">
+            <div class="report-kpi-val">
+              ${enrolled.length > 0 ? (() => { const avg = Math.round(enrolled.filter(e=>e.att).reduce((s,e) => s + e.att.pct, 0) / enrolled.filter(e=>e.att).length); return `<span style="color:${avg < 75 ? '#e53e3e' : '#25a244'}">${avg}%</span>`; })() : '—'}
+            </div>
+            <div class="report-kpi-label">Avg Att.</div>
+          </div>` : ''}
+        </div>
+      </div>
+    </div>
+
+    <!-- Per-course breakdown -->
+    ${enrolled.length === 0 ? `<div class="empty-state"><span class="empty-icon">📚</span><h3>Not enrolled in any courses</h3></div>` :
+      enrolled.map(e => `
+      <div class="card" style="margin-bottom:20px">
+        <!-- Course title + cert -->
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+          <div>
+            <div style="font-family:var(--font-display);font-size:22px;letter-spacing:.4px">${e.course.title}</div>
+            ${e.risks.length > 0 ? `<div class="risk-flag" style="margin-top:6px">⚠ ${e.risks.join(' · ')}</div>` : ''}
+          </div>
+          ${e.cert ? `<button class="cert-badge" onclick="openCertificate('${studentId}','${e.course.id}')">🎓 View Certificate</button>` : ''}
+        </div>
+
+        <!-- KPI row -->
+        <div class="report-detail-grid">
+          ${student.type === 'online' ? `
+          <div>
+            <div class="report-section-title">Lesson Progress</div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+              <span class="text-sm text-gray">Completed</span>
+              <span class="text-sm font-bold">${e.enrollment.completedLessons.length} / ${e.course.lessons.length} (${e.lessonPct}%)</span>
+            </div>
+            <div class="progress-bar" style="height:8px"><div class="progress-fill" style="width:${e.lessonPct}%"></div></div>
+            <div style="margin-top:12px">
+              ${e.course.lessons.map((l, i) => `
+                <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--gray-200);font-size:13px">
+                  <span style="color:${e.enrollment.completedLessons.includes(l.id) ? '#25a244' : 'var(--gray-400)'};font-size:15px">${e.enrollment.completedLessons.includes(l.id) ? '✓' : '○'}</span>
+                  <span style="color:${e.enrollment.completedLessons.includes(l.id) ? 'var(--black)' : 'var(--gray-400)'};">${l.title}</span>
+                  <span class="badge badge-gray" style="margin-left:auto">${l.type}</span>
+                </div>`).join('')}
+            </div>
+          </div>` : `
+          <div>
+            <div class="report-section-title">Attendance</div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+              <span class="text-sm text-gray">Sessions attended</span>
+              <span class="att-pct ${attClass(e.att ? e.att.pct : 0)} text-sm">${e.att ? e.att.pct : 0}% (${e.att ? e.att.attended : 0}/${e.att ? e.att.total : 0})</span>
+            </div>
+            <div class="progress-bar" style="height:8px"><div class="progress-fill" style="width:${e.att ? e.att.pct : 0}%"></div></div>
+            <div style="font-size:12px;color:var(--gray-600);margin-top:6px">Threshold: <strong>${e.threshold}%</strong>
+              ${e.att && e.att.pct >= e.threshold ? `<span class="badge badge-green" style="margin-left:6px">On track</span>` : e.att && e.att.total > 0 ? `<span class="badge badge-red" style="margin-left:6px">Below threshold</span>` : ''}
+            </div>
+            <!-- Session-by-session breakdown -->
+            <div style="margin-top:12px">
+              ${DB.get('sessions').filter(s => s.courseId === e.course.id).sort((a,b) => a.date - b.date).map(s => `
+                <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--gray-200);font-size:13px">
+                  <span style="color:${s.attendees.includes(studentId) ? '#25a244' : '#e53e3e'};font-size:15px">${s.attendees.includes(studentId) ? '✓' : '✗'}</span>
+                  <span>${s.label}</span>
+                  <span class="text-gray text-sm" style="margin-left:auto">${formatDate(s.date)}</span>
+                </div>`).join('') || '<p class="text-gray text-sm">No sessions yet.</p>'}
+            </div>
+          </div>`}
+
+          <!-- Exam column -->
+          <div>
+            <div class="report-section-title">Exam Results</div>
+            ${!e.result ? `
+              <div style="background:var(--gray-100);border-radius:6px;padding:16px;text-align:center;color:var(--gray-600);font-size:14px">
+                ${e.course.exam ? 'Exam not taken yet.' : 'No exam for this course.'}
+              </div>` : `
+              <div style="background:${e.result.score >= 60 ? '#e6f7ee' : '#fff5f5'};border-radius:6px;padding:16px;text-align:center;margin-bottom:12px">
+                <div style="font-family:var(--font-display);font-size:48px;color:${e.result.score >= 60 ? '#25a244' : '#e53e3e'}">${e.result.score}%</div>
+                <div style="font-size:12px;color:var(--gray-600)">${e.result.correct}/${e.result.total} MCQ correct · ${new Date(e.result.submittedAt).toLocaleDateString('en-GB')}</div>
+                <div style="margin-top:6px"><span class="badge ${e.result.score >= 60 ? 'badge-green' : 'badge-red'}">${e.result.score >= 60 ? 'Passed' : 'Failed'}</span></div>
+              </div>
+              <!-- MCQ breakdown -->
+              ${e.course.exam ? e.course.exam.questions.filter(q => q.type === 'mcq').map((q, qi) => {
+                const realIdx = e.course.exam.questions.indexOf(q);
+                const userAns = e.result.answers[realIdx];
+                const correct = userAns === q.correct;
+                return `<div style="display:flex;align-items:flex-start;gap:8px;padding:5px 0;border-bottom:1px solid var(--gray-200);font-size:13px">
+                  <span style="color:${correct ? '#25a244' : '#e53e3e'};font-size:15px;flex-shrink:0">${correct ? '✓' : '✗'}</span>
+                  <div style="flex:1">
+                    <div style="font-weight:500">${q.text}</div>
+                    ${!correct ? `<div style="color:#e53e3e;font-size:12px">Answered: ${q.options[userAns] || 'No answer'} · Correct: ${q.options[q.correct]}</div>` : ''}
+                  </div>
+                </div>`;
+              }).join('') : ''}
+              <!-- Open answer grading -->
+              ${e.course.exam ? e.course.exam.questions.filter(q => q.type === 'open').map((q, qi) => {
+                const realIdx = e.course.exam.questions.indexOf(q);
+                const userAns = e.result.answers[realIdx] || '';
+                const gradeKey = e.result.id + '_' + realIdx;
+                const savedGrade = grades[gradeKey] || '';
+                return `<div class="open-answer-review">
+                  <div class="q-text">Open Q: ${q.text}</div>
+                  <div class="a-text">${userAns || '<em>No answer provided</em>'}</div>
+                  <div style="display:flex;align-items:center;gap:8px;margin-top:10px">
+                    <label style="font-size:12px;font-weight:600;color:var(--gray-600)">Grade:</label>
+                    <select class="grade-select" onchange="saveOpenGrade('${e.result.id}','${realIdx}',this.value)">
+                      <option value="" ${!savedGrade ? 'selected' : ''}>— Not graded —</option>
+                      <option value="Pass"      ${savedGrade === 'Pass'      ? 'selected' : ''}>✓ Pass</option>
+                      <option value="Good"      ${savedGrade === 'Good'      ? 'selected' : ''}>★ Good</option>
+                      <option value="Excellent" ${savedGrade === 'Excellent' ? 'selected' : ''}>🏆 Excellent</option>
+                      <option value="Fail"      ${savedGrade === 'Fail'      ? 'selected' : ''}>✗ Fail</option>
+                    </select>
+                    ${savedGrade ? `<span class="badge ${savedGrade === 'Fail' ? 'badge-red' : 'badge-green'}">${savedGrade}</span>` : ''}
+                  </div>
+                </div>`;
+              }).join('') : ''}`}
+          </div>
+        </div>
+      </div>`).join('')}`;
+
+  document.getElementById('page-content').innerHTML = html;
+}
+
+/* Save a teacher's open-answer grade to localStorage */
+function saveOpenGrade(resultId, questionIdx, grade) {
+  const grades = DB.getObj('open_grades', {});
+  const key    = resultId + '_' + questionIdx;
+  if (grade) grades[key] = grade;
+  else delete grades[key];
+  DB.setObj('open_grades', grades);
+  showToast(grade ? `✅ Graded: ${grade}` : '🗑️ Grade cleared');
+}
+
+/* Printable HTML report — opens in new tab */
+function openPrintableReport(studentId) {
+  const student     = DB.get('users').find(u => u.id === studentId);
+  const courses     = DB.get('courses');
+  const enrollments = DB.get('enrollments').filter(e => e.studentId === studentId);
+  const results     = DB.get('exam_results').filter(r => r.studentId === studentId);
+  const certs       = DB.get('certificates').filter(c => c.studentId === studentId);
+  const grades      = DB.getObj('open_grades', {});
+  if (!student) return;
+
+  const enrolled = enrollments.map(e => {
+    const c       = courses.find(x => x.id === e.courseId);
+    if (!c) return null;
+    const result    = results.find(r => r.courseId === e.courseId);
+    const att       = student.type === 'onsite' ? getStudentAttendance(studentId, e.courseId) : null;
+    const cert      = certs.find(x => x.courseId === e.courseId);
+    const lessonPct = c.lessons.length > 0 ? Math.round((e.completedLessons.length / c.lessons.length) * 100) : 0;
+    return { course: c, enrollment: e, result, att, cert, lessonPct };
+  }).filter(Boolean);
+
+  const issued = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+
+  const courseRows = enrolled.map(e => {
+    const score = e.result ? e.result.score + '%' : 'Not taken';
+    const prog  = student.type === 'online'
+      ? `${e.enrollment.completedLessons.length}/${e.course.lessons.length} lessons (${e.lessonPct}%)`
+      : e.att ? `${e.att.attended}/${e.att.total} sessions (${e.att.pct}%)` : '—';
+    const certStr = e.cert ? '✓ Issued' : '—';
+    const status  = e.cert ? 'Complete' : (e.result && e.result.score >= 60 ? 'Exam Passed' : 'In Progress');
+    return `<tr>
+      <td>${e.course.title}</td>
+      <td>${prog}</td>
+      <td style="font-weight:600;color:${e.result ? (e.result.score >= 60 ? '#1a7a3c' : '#c53030') : '#555'}">${score}</td>
+      <td>${certStr}</td>
+      <td>${status}</td>
+    </tr>`;
+  }).join('');
+
+  // Open answers for print
+  const openAnswerRows = enrolled.flatMap(e => {
+    if (!e.result || !e.course.exam) return [];
+    return e.course.exam.questions.filter(q => q.type === 'open').map((q, qi) => {
+      const realIdx = e.course.exam.questions.indexOf(q);
+      const ans     = e.result.answers[realIdx] || 'No answer provided';
+      const grade   = grades[e.result.id + '_' + realIdx] || 'Not graded';
+      return `<div style="margin-bottom:14px;padding:14px;border:1px solid #e8e8e8;border-radius:4px;border-left:4px solid #FF6B00">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#a0a0a0;margin-bottom:4px">${e.course.title}</div>
+        <div style="font-size:14px;font-weight:600;margin-bottom:6px">${q.text}</div>
+        <div style="font-size:14px;color:#555;font-style:italic;margin-bottom:8px">${ans}</div>
+        <div style="font-size:12px">Grade: <strong>${grade}</strong></div>
+      </div>`;
+    });
+  }).join('');
+
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<title>Progress Report — ${student.name}</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'DM Sans',sans-serif;color:#0a0a0a;background:#fff;padding:32px 40px;max-width:860px;margin:0 auto;font-size:14px;line-height:1.6;}
+  h1{font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:1px;color:#0a0a0a;}
+  h2{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.5px;margin:28px 0 10px;}
+  .logo{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;color:#0a0a0a;margin-bottom:20px;}
+  .logo span{color:#FF6B00;}
+  .header{border-bottom:3px solid #FF6B00;padding-bottom:16px;margin-bottom:24px;}
+  .meta-row{display:flex;gap:24px;font-size:13px;color:#555;margin-top:8px;}
+  .meta-row strong{color:#0a0a0a;}
+  .kpi-row{display:flex;gap:16px;margin:20px 0;}
+  .kpi{flex:1;background:#f5f5f5;border-radius:4px;padding:12px;text-align:center;}
+  .kpi-val{font-family:'Bebas Neue',sans-serif;font-size:32px;}
+  .kpi-label{font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:#a0a0a0;}
+  table{width:100%;border-collapse:collapse;margin-bottom:20px;}
+  th{padding:8px 12px;text-align:left;font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:#555;border-bottom:2px solid #e8e8e8;}
+  td{padding:10px 12px;font-size:14px;border-bottom:1px solid #e8e8e8;}
+  .badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700;text-transform:uppercase;}
+  .badge-orange{background:#fff3ea;color:#FF6B00;}
+  footer{margin-top:40px;padding-top:16px;border-top:1px solid #e8e8e8;font-size:11px;color:#a0a0a0;display:flex;justify-content:space-between;}
+  @media print{body{padding:20px;} .no-print{display:none;}}
+</style>
+</head>
+<body>
+  <div class="logo">LEARN<span>FORGE</span></div>
+  <div class="header">
+    <h1>Student Progress Report</h1>
+    <div class="meta-row">
+      <span><strong>Student:</strong> ${student.name}</span>
+      <span><strong>Email:</strong> ${student.email}</span>
+      <span><strong>Track:</strong> ${student.type === 'online' ? 'Online' : 'On-site'}</span>
+      <span><strong>Generated:</strong> ${issued}</span>
+    </div>
+  </div>
+
+  <div class="kpi-row">
+    <div class="kpi"><div class="kpi-val">${enrolled.length}</div><div class="kpi-label">Courses Enrolled</div></div>
+    <div class="kpi"><div class="kpi-val">${results.length}</div><div class="kpi-label">Exams Taken</div></div>
+    <div class="kpi"><div class="kpi-val" style="color:${results.length && Math.round(results.reduce((a,r)=>a+r.score,0)/results.length) < 60 ? '#c53030' : '#1a7a3c'}">${results.length ? Math.round(results.reduce((a,r)=>a+r.score,0)/results.length)+'%' : '—'}</div><div class="kpi-label">Avg Score</div></div>
+    <div class="kpi"><div class="kpi-val" style="color:${certs.length > 0 ? '#1a7a3c' : '#a0a0a0'}">${certs.length}</div><div class="kpi-label">Certificates</div></div>
+  </div>
+
+  <h2>Course Summary</h2>
+  <table>
+    <thead><tr><th>Course</th><th>${student.type === 'online' ? 'Progress' : 'Attendance'}</th><th>Exam Score</th><th>Certificate</th><th>Status</th></tr></thead>
+    <tbody>${courseRows}</tbody>
+  </table>
+
+  ${openAnswerRows ? `<h2>Open Answer Responses</h2>${openAnswerRows}` : ''}
+
+  <footer>
+    <span>LearnForge · Confidential Student Report</span>
+    <span>Generated ${issued}</span>
+  </footer>
+
+  <div class="no-print" style="position:fixed;bottom:20px;right:20px">
+    <button onclick="window.print()" style="padding:10px 24px;background:#FF6B00;color:#fff;border:none;border-radius:4px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;">
+      🖨️ Print / Save PDF
+    </button>
+  </div>
+</body>
+</html>`;
+
+  const blob = new Blob([html], { type: 'text/html' });
+  window.open(URL.createObjectURL(blob), '_blank');
 }
 
 /* ═══════════════════════════════════════════════
