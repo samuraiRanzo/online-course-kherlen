@@ -358,6 +358,34 @@
   .type-online { background: #e8f0fe; color: #2563eb; }
   .type-onsite { background: var(--orange-light); color: var(--orange); }
 
+  /* ─── ANNOUNCEMENTS ────────────────────────────── */
+  .notice-banner {
+    display: flex; align-items: flex-start; gap: 14px;
+    padding: 14px 18px; background: var(--orange-light);
+    border: 1.5px solid var(--orange); border-radius: 8px;
+    margin-bottom: 12px; cursor: pointer; transition: background .15s;
+  }
+  .notice-banner:hover { background: #fde8d0; }
+  .notice-banner.pinned { border-color: var(--black); background: #f7f7f7; }
+  .notice-banner-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+  .notice-banner-body { flex: 1; min-width: 0; }
+  .notice-banner-title { font-size: 14px; font-weight: 600; color: var(--black); }
+  .notice-banner-meta  { font-size: 12px; color: var(--gray-600); margin-top: 2px; }
+  .notice-banner-text  { font-size: 13px; color: var(--gray-600); margin-top: 4px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .notice-unread-dot   { width: 8px; height: 8px; background: var(--orange); border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+  .notice-card {
+    background: var(--white); border: 1.5px solid var(--gray-200); border-radius: 8px;
+    overflow: hidden; margin-bottom: 14px;
+  }
+  .notice-card.pinned { border-color: var(--orange); }
+  .notice-card-header { padding: 16px 20px; display: flex; align-items: flex-start; gap: 12px; }
+  .notice-card-pin { font-size: 16px; flex-shrink: 0; }
+  .notice-card-info { flex: 1; }
+  .notice-card-title { font-size: 16px; font-weight: 600; }
+  .notice-card-meta  { font-size: 12px; color: var(--gray-600); margin-top: 3px; }
+  .notice-card-body  { padding: 0 20px 16px; font-size: 14px; color: var(--gray-600); line-height: 1.7; white-space: pre-wrap; }
+  .notice-card-footer { padding: 10px 20px; border-top: 1.5px solid var(--gray-200); display: flex; gap: 8px; justify-content: flex-end; }
+
   /* ─── REPORTS ──────────────────────────────────── */
   .report-student-card {
     background: var(--white); border: 1.5px solid var(--gray-200); border-radius: 8px;
@@ -481,7 +509,7 @@ function genCode() {
 }
 
 /* ─── SEED ─── */
-const DATA_VERSION = 'v5'; // bump this whenever seed data changes
+const DATA_VERSION = 'v6'; // bump this whenever seed data changes
 function seedData() {
   if (localStorage.getItem('lf_data_version') === DATA_VERSION) return;
   // clear all old keys so stale data never blocks new seed
@@ -530,6 +558,12 @@ function seedData() {
   ];
   DB.set('sessions', pastSessions);
   DB.set('exam_results', []);
+  DB.set('certificates', []);
+  DB.set('announcements', [
+    { id: 'an001', courseId: 'c001', title: 'Welcome to the course!', body: 'Hi everyone — welcome to JavaScript Fundamentals. Make sure you complete all three lessons before the exam. Feel free to reach out if you have any questions.', pinned: true,  createdAt: Date.now() - 5*86400000 },
+    { id: 'an002', courseId: 'c001', title: 'Exam date reminder',     body: 'A reminder that the final exam is available as soon as you finish all lessons. On-site students: your last session is next Monday. Good luck!',             pinned: false, createdAt: Date.now() - 1*86400000 }
+  ]);
+  DB.setObj('read_announcements', {});
 }
 
 /* ═══════════════════════════════════════════════
@@ -589,7 +623,8 @@ function navigate(route, params = {}) {
     attendance:       renderAttendancePage,
     'check-in':       renderCheckIn,
     reports:          renderReports,
-    'student-report': renderStudentReport
+    'student-report': renderStudentReport,
+    announcements:    renderAnnouncementsPage
   };
   document.querySelectorAll('.nav-item').forEach(el => {
     el.classList.toggle('active', el.dataset.route === route);
@@ -609,36 +644,45 @@ function buildSidebar() {
   if (isAdmin) {
     items = [
       { section: 'Overview' },
-      { route: 'dashboard',  icon: '⊞',  label: 'Dashboard' },
+      { route: 'dashboard',      icon: '⊞',  label: 'Dashboard' },
       { section: 'Manage' },
-      { route: 'students',   icon: '👥', label: 'Students' },
-      { route: 'courses',    icon: '📚', label: 'Courses' },
-      { route: 'attendance', icon: '📋', label: 'Attendance' },
-      { route: 'reports',    icon: '📈', label: 'Reports' }
+      { route: 'students',       icon: '👥', label: 'Students' },
+      { route: 'courses',        icon: '📚', label: 'Courses' },
+      { route: 'attendance',     icon: '📋', label: 'Attendance' },
+      { route: 'reports',        icon: '📈', label: 'Reports' },
+      { route: 'announcements',  icon: '📣', label: 'Announcements' }
     ];
   } else if (isOnsite) {
     items = [
       { section: 'Overview' },
-      { route: 'dashboard',  icon: '⊞',  label: 'Dashboard' },
+      { route: 'dashboard',      icon: '⊞',  label: 'Dashboard' },
       { section: 'Learning' },
-      { route: 'my-courses', icon: '📚', label: 'My Courses' },
+      { route: 'my-courses',     icon: '📚', label: 'My Courses' },
+      { route: 'announcements',  icon: '📣', label: 'Notices', badge: true },
       { section: 'Attendance' },
-      { route: 'check-in',   icon: '📋', label: 'Check In' },
-      { route: 'attendance', icon: '📊', label: 'My Attendance' }
+      { route: 'check-in',       icon: '📋', label: 'Check In' },
+      { route: 'attendance',     icon: '📊', label: 'My Attendance' }
     ];
   } else {
     items = [
       { section: 'Overview' },
-      { route: 'dashboard',  icon: '⊞',  label: 'Dashboard' },
+      { route: 'dashboard',      icon: '⊞',  label: 'Dashboard' },
       { section: 'Learning' },
-      { route: 'my-courses', icon: '📚', label: 'My Courses' }
+      { route: 'my-courses',     icon: '📚', label: 'My Courses' },
+      { route: 'announcements',  icon: '📣', label: 'Notices', badge: true }
     ];
   }
 
   nav.innerHTML = items.map(item => {
     if (item.section) return `<div class="nav-section">${item.section}</div>`;
+    // unread badge for students
+    let badgeHTML = '';
+    if (item.badge && currentUser.role === 'student') {
+      const unread = getUnreadCount(currentUser.id);
+      if (unread > 0) badgeHTML = `<span style="margin-left:auto;background:var(--orange);color:#fff;font-size:10px;font-weight:700;padding:1px 7px;border-radius:20px;letter-spacing:.3px">${unread}</span>`;
+    }
     return `<div class="nav-item" data-route="${item.route}" onclick="navigate('${item.route}')">
-      <span class="nav-icon">${item.icon}</span>${item.label}
+      <span class="nav-icon">${item.icon}</span>${item.label}${badgeHTML}
     </div>`;
   }).join('');
 }
@@ -800,7 +844,30 @@ function renderDashboard() {
         </div>`}
       </div>`;
 
-    document.getElementById('page-content').innerHTML = statCards + `
+    // Unread announcements for enrolled courses
+    const enrolledCourseIds = enrollments.map(e => e.courseId);
+    const unreadNotices     = getUnreadNotices(currentUser.id, enrolledCourseIds);
+    const noticeBannersHTML = unreadNotices.length > 0 ? `
+      <div style="margin-bottom:20px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <div style="font-family:var(--font-display);font-size:20px;letter-spacing:.5px">📣 Notices</div>
+          <button class="btn btn-ghost btn-sm" onclick="navigate('announcements')">View all</button>
+        </div>
+        ${unreadNotices.slice(0, 3).map(n => {
+          const c = DB.get('courses').find(x => x.id === n.courseId);
+          return `<div class="notice-banner ${n.pinned ? 'pinned' : ''}" onclick="markRead('${currentUser.id}','${n.id}');navigate('announcements')">
+            <div class="notice-unread-dot"></div>
+            <div class="notice-banner-body">
+              <div class="notice-banner-title">${n.pinned ? '📌 ' : ''}${n.title}</div>
+              <div class="notice-banner-meta">${c ? c.title : ''} · ${formatDate(n.createdAt)}</div>
+              <div class="notice-banner-text">${n.body}</div>
+            </div>
+            <span style="font-size:18px;color:var(--gray-400);flex-shrink:0">›</span>
+          </div>`;
+        }).join('')}
+      </div>` : '';
+
+    document.getElementById('page-content').innerHTML = statCards + noticeBannersHTML + `
       <div class="card">
         <div class="card-title" style="margin-bottom:16px">Your Courses</div>
         ${enrolled.length === 0 ? `<p class="text-gray text-sm">Not enrolled in any courses.</p>` :
@@ -1014,9 +1081,10 @@ function renderCourseDetail({ courseId }) {
       </div>`;
     document.getElementById('page-content').innerHTML = `
       <div class="tabs">
-        <div class="tab active" id="tab-lessons"  onclick="switchCourseTab('lessons','${courseId}')">Lessons</div>
-        <div class="tab"        id="tab-exam"      onclick="switchCourseTab('exam','${courseId}')">Exam Builder</div>
-        <div class="tab"        id="tab-sessions"  onclick="switchCourseTab('sessions','${courseId}')">Sessions &amp; Attendance</div>
+        <div class="tab active" id="tab-lessons"       onclick="switchCourseTab('lessons','${courseId}')">Lessons</div>
+        <div class="tab"        id="tab-exam"           onclick="switchCourseTab('exam','${courseId}')">Exam Builder</div>
+        <div class="tab"        id="tab-sessions"       onclick="switchCourseTab('sessions','${courseId}')">Sessions &amp; Attendance</div>
+        <div class="tab"        id="tab-announcements"  onclick="switchCourseTab('announcements','${courseId}')">Announcements</div>
       </div>
       <div id="course-tab-content"></div>`;
     renderLessonsTab(courseId);
@@ -1117,9 +1185,10 @@ function deleteCourse(courseId) {
 function switchCourseTab(tab, courseId) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.getElementById('tab-' + tab).classList.add('active');
-  if      (tab === 'lessons')  renderLessonsTab(courseId);
-  else if (tab === 'exam')     renderExamBuilderTab(courseId);
-  else if (tab === 'sessions') renderSessionsTab(courseId);
+  if      (tab === 'lessons')       renderLessonsTab(courseId);
+  else if (tab === 'exam')          renderExamBuilderTab(courseId);
+  else if (tab === 'sessions')      renderSessionsTab(courseId);
+  else if (tab === 'announcements') renderCourseAnnouncementsTab(courseId);
 }
 
 /* ─── LESSONS TAB ─── */
@@ -2524,6 +2593,266 @@ function openPrintableReport(studentId) {
 
   const blob = new Blob([html], { type: 'text/html' });
   window.open(URL.createObjectURL(blob), '_blank');
+}
+
+/* ═══════════════════════════════════════════════
+   ANNOUNCEMENTS — HELPERS
+═══════════════════════════════════════════════ */
+
+/* Get all unread announcements for a student across given courseIds */
+function getUnreadNotices(studentId, courseIds) {
+  const all  = DB.get('announcements').filter(n => courseIds.includes(n.courseId));
+  const read = DB.getObj('read_announcements', {})[studentId] || [];
+  // pinned first, then by date desc
+  return all
+    .filter(n => !read.includes(n.id))
+    .sort((a, b) => b.pinned - a.pinned || b.createdAt - a.createdAt);
+}
+
+/* Total unread count across all enrolled courses for sidebar badge */
+function getUnreadCount(studentId) {
+  const courseIds = DB.get('enrollments').filter(e => e.studentId === studentId).map(e => e.courseId);
+  return getUnreadNotices(studentId, courseIds).length;
+}
+
+/* Mark a single announcement as read for a student */
+function markRead(studentId, announcementId) {
+  const store = DB.getObj('read_announcements', {});
+  if (!store[studentId]) store[studentId] = [];
+  if (!store[studentId].includes(announcementId)) {
+    store[studentId].push(announcementId);
+    DB.setObj('read_announcements', store);
+    // refresh sidebar badge
+    buildSidebar();
+    document.querySelectorAll('.nav-item').forEach(el => {
+      el.classList.toggle('active', el.dataset.route === currentRoute);
+    });
+  }
+}
+
+/* Mark all as read for a student (used on Notices page) */
+function markAllRead(studentId, courseIds) {
+  const all   = DB.get('announcements').filter(n => courseIds.includes(n.courseId));
+  const store = DB.getObj('read_announcements', {});
+  if (!store[studentId]) store[studentId] = [];
+  all.forEach(n => { if (!store[studentId].includes(n.id)) store[studentId].push(n.id); });
+  DB.setObj('read_announcements', store);
+  buildSidebar();
+  document.querySelectorAll('.nav-item').forEach(el => {
+    el.classList.toggle('active', el.dataset.route === currentRoute);
+  });
+}
+
+/* ═══════════════════════════════════════════════
+   ANNOUNCEMENTS TAB — inside Course Detail (Admin)
+═══════════════════════════════════════════════ */
+function renderCourseAnnouncementsTab(courseId) {
+  const notices = DB.get('announcements')
+    .filter(n => n.courseId === courseId)
+    .sort((a, b) => b.pinned - a.pinned || b.createdAt - a.createdAt);
+
+  document.getElementById('course-tab-content').innerHTML = `
+    <div class="section-header">
+      <div class="section-title">Announcements (${notices.length})</div>
+      <button class="btn btn-primary btn-sm" onclick="openCreateNoticeModal('${courseId}')">+ New Notice</button>
+    </div>
+    ${notices.length === 0
+      ? `<div class="empty-state"><span class="empty-icon">📣</span><h3>No announcements yet</h3><p>Post a notice to enrolled students.</p></div>`
+      : notices.map(n => `
+        <div class="notice-card ${n.pinned ? 'pinned' : ''}">
+          <div class="notice-card-header">
+            <div class="notice-card-pin">${n.pinned ? '📌' : '📣'}</div>
+            <div class="notice-card-info">
+              <div class="notice-card-title">${n.title}</div>
+              <div class="notice-card-meta">${formatDate(n.createdAt)}${n.pinned ? ' · Pinned' : ''}</div>
+            </div>
+            <div style="display:flex;gap:6px;flex-shrink:0">
+              <button class="btn btn-ghost btn-sm" onclick="togglePinNotice('${n.id}','${courseId}')">${n.pinned ? 'Unpin' : 'Pin'}</button>
+              <button class="btn btn-ghost btn-sm" onclick="openEditNoticeModal('${n.id}','${courseId}')">Edit</button>
+              <button class="btn btn-danger btn-sm" onclick="deleteNotice('${n.id}','${courseId}')">Delete</button>
+            </div>
+          </div>
+          <div class="notice-card-body">${n.body}</div>
+        </div>`).join('')}`;
+}
+
+function openCreateNoticeModal(courseId) {
+  openModal('New Announcement',
+    `<div class="form-group"><label class="form-label">Title</label>
+       <input type="text" id="nn-title" class="form-control" placeholder="e.g. Exam date changed" /></div>
+     <div class="form-group"><label class="form-label">Message</label>
+       <textarea id="nn-body" class="form-control" rows="5" placeholder="Write your announcement..."></textarea></div>
+     <div class="form-group" style="display:flex;align-items:center;gap:10px">
+       <input type="checkbox" id="nn-pin" style="width:16px;height:16px;cursor:pointer" />
+       <label for="nn-pin" style="font-size:14px;cursor:pointer">📌 Pin this announcement (shows first)</label>
+     </div>`,
+    `<button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+     <button class="btn btn-primary" onclick="createNotice('${courseId}')">Post Notice</button>`
+  );
+}
+
+function createNotice(courseId) {
+  const title  = document.getElementById('nn-title').value.trim();
+  const body   = document.getElementById('nn-body').value.trim();
+  const pinned = document.getElementById('nn-pin').checked;
+  if (!title || !body) { showToast('⚠️ Title and message are required'); return; }
+  const notices = DB.get('announcements');
+  notices.push({ id: uid(), courseId, title, body, pinned, createdAt: Date.now() });
+  DB.set('announcements', notices);
+  closeModal();
+  showToast('✅ Announcement posted');
+  renderCourseAnnouncementsTab(courseId);
+}
+
+function openEditNoticeModal(noticeId, courseId) {
+  const n = DB.get('announcements').find(x => x.id === noticeId);
+  if (!n) return;
+  openModal('Edit Announcement',
+    `<div class="form-group"><label class="form-label">Title</label>
+       <input type="text" id="en-title" class="form-control" value="${n.title.replace(/"/g, '&quot;')}" /></div>
+     <div class="form-group"><label class="form-label">Message</label>
+       <textarea id="en-body" class="form-control" rows="5">${n.body}</textarea></div>
+     <div class="form-group" style="display:flex;align-items:center;gap:10px">
+       <input type="checkbox" id="en-pin" ${n.pinned ? 'checked' : ''} style="width:16px;height:16px;cursor:pointer" />
+       <label for="en-pin" style="font-size:14px;cursor:pointer">📌 Pin this announcement</label>
+     </div>`,
+    `<button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+     <button class="btn btn-primary" onclick="saveNotice('${noticeId}','${courseId}')">Save Changes</button>`
+  );
+}
+
+function saveNotice(noticeId, courseId) {
+  const title  = document.getElementById('en-title').value.trim();
+  const body   = document.getElementById('en-body').value.trim();
+  const pinned = document.getElementById('en-pin').checked;
+  if (!title || !body) { showToast('⚠️ Title and message are required'); return; }
+  const notices = DB.get('announcements');
+  const idx     = notices.findIndex(n => n.id === noticeId);
+  notices[idx]  = { ...notices[idx], title, body, pinned };
+  DB.set('announcements', notices);
+  closeModal();
+  showToast('✅ Announcement updated');
+  renderCourseAnnouncementsTab(courseId);
+}
+
+function togglePinNotice(noticeId, courseId) {
+  const notices = DB.get('announcements');
+  const idx     = notices.findIndex(n => n.id === noticeId);
+  notices[idx].pinned = !notices[idx].pinned;
+  DB.set('announcements', notices);
+  showToast(notices[idx].pinned ? '📌 Pinned' : '📌 Unpinned');
+  renderCourseAnnouncementsTab(courseId);
+}
+
+function deleteNotice(noticeId, courseId) {
+  if (!confirm('Delete this announcement?')) return;
+  DB.set('announcements', DB.get('announcements').filter(n => n.id !== noticeId));
+  // remove from all read lists
+  const store = DB.getObj('read_announcements', {});
+  Object.keys(store).forEach(uid => { store[uid] = store[uid].filter(id => id !== noticeId); });
+  DB.setObj('read_announcements', store);
+  showToast('🗑️ Announcement deleted');
+  renderCourseAnnouncementsTab(courseId);
+}
+
+/* ═══════════════════════════════════════════════
+   ANNOUNCEMENTS PAGE
+   Admin  → all notices across all courses
+   Student → their notices, mark-as-read
+═══════════════════════════════════════════════ */
+function renderAnnouncementsPage() {
+  document.getElementById('topbar-title').textContent = currentUser.role === 'admin' ? 'Announcements' : 'Notices';
+  document.getElementById('topbar-actions').innerHTML = '';
+
+  const courses = DB.get('courses');
+
+  if (currentUser.role === 'admin') {
+    // Admin global view — all notices grouped by course
+    const allNotices = DB.get('announcements').sort((a, b) => b.pinned - a.pinned || b.createdAt - a.createdAt);
+
+    const totalPinned = allNotices.filter(n => n.pinned).length;
+
+    document.getElementById('page-content').innerHTML = `
+      <div class="stats-grid" style="margin-bottom:24px">
+        <div class="stat-card accent">
+          <div class="stat-label">Total Notices</div>
+          <div class="stat-value">${allNotices.length}</div>
+          <div class="stat-sub">Across all courses</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Pinned</div>
+          <div class="stat-value">${totalPinned}</div>
+          <div class="stat-sub">Currently pinned</div>
+        </div>
+      </div>
+      ${courses.map(course => {
+        const cNotices = allNotices.filter(n => n.courseId === course.id);
+        return `<div class="card" style="margin-bottom:20px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:${cNotices.length > 0 ? '16px' : '0'}">
+            <div>
+              <div class="card-title">${course.title}</div>
+              <div class="text-gray text-sm">${cNotices.length} announcement${cNotices.length !== 1 ? 's' : ''}</div>
+            </div>
+            <button class="btn btn-ghost btn-sm" onclick="navigate('course-detail',{courseId:'${course.id}'})">Manage →</button>
+          </div>
+          ${cNotices.length === 0
+            ? `<p class="text-gray text-sm">No announcements for this course.</p>`
+            : cNotices.map(n => `
+              <div class="notice-card ${n.pinned ? 'pinned' : ''}">
+                <div class="notice-card-header">
+                  <div class="notice-card-pin">${n.pinned ? '📌' : '📣'}</div>
+                  <div class="notice-card-info">
+                    <div class="notice-card-title">${n.title}</div>
+                    <div class="notice-card-meta">${formatDate(n.createdAt)}${n.pinned ? ' · Pinned' : ''}</div>
+                  </div>
+                  <div style="display:flex;gap:6px;flex-shrink:0">
+                    <button class="btn btn-ghost btn-sm" onclick="togglePinNotice('${n.id}','${course.id}');renderAnnouncementsPage()">${n.pinned ? 'Unpin' : 'Pin'}</button>
+                    <button class="btn btn-danger btn-sm" onclick="deleteNotice('${n.id}','${course.id}');renderAnnouncementsPage()">Delete</button>
+                  </div>
+                </div>
+                <div class="notice-card-body">${n.body}</div>
+              </div>`).join('')}
+        </div>`;
+      }).join('')}`;
+
+  } else {
+    // Student view — notices for enrolled courses
+    const enrollments   = DB.get('enrollments').filter(e => e.studentId === currentUser.id);
+    const enrolledIds   = enrollments.map(e => e.courseId);
+    const allNotices    = DB.get('announcements')
+      .filter(n => enrolledIds.includes(n.courseId))
+      .sort((a, b) => b.pinned - a.pinned || b.createdAt - a.createdAt);
+    const readStore     = DB.getObj('read_announcements', {})[currentUser.id] || [];
+    const unreadCount   = allNotices.filter(n => !readStore.includes(n.id)).length;
+
+    // Mark all read when page is opened
+    markAllRead(currentUser.id, enrolledIds);
+
+    document.getElementById('topbar-actions').innerHTML = unreadCount > 0
+      ? `<span class="badge badge-orange">${unreadCount} unread</span>`
+      : '';
+
+    document.getElementById('page-content').innerHTML = `
+      ${allNotices.length === 0
+        ? `<div class="empty-state"><span class="empty-icon">📣</span><h3>No notices yet</h3><p>Your teacher hasn't posted any announcements.</p></div>`
+        : allNotices.map(n => {
+            const course  = courses.find(c => c.id === n.courseId);
+            const wasRead = readStore.includes(n.id);
+            return `<div class="notice-card ${n.pinned ? 'pinned' : ''}">
+              <div class="notice-card-header">
+                <div class="notice-card-pin">${n.pinned ? '📌' : '📣'}</div>
+                <div class="notice-card-info">
+                  <div class="notice-card-title" style="display:flex;align-items:center;gap:8px">
+                    ${n.title}
+                    ${!wasRead ? `<span style="display:inline-block;width:8px;height:8px;background:var(--orange);border-radius:50%;flex-shrink:0"></span>` : ''}
+                  </div>
+                  <div class="notice-card-meta">${course ? course.title : ''} · ${formatDate(n.createdAt)}${n.pinned ? ' · Pinned' : ''}</div>
+                </div>
+              </div>
+              <div class="notice-card-body">${n.body}</div>
+            </div>`;
+          }).join('')}`;
+  }
 }
 
 /* ═══════════════════════════════════════════════
