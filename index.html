@@ -101,6 +101,8 @@
   .badge-black { background: var(--black); color: var(--white); }
   .badge-gray { background: var(--gray-200); color: var(--gray-600); }
   .badge-green { background: #e6f7ee; color: #25a244; }
+  .badge-blue { background: #e8f0fe; color: #2563eb; }
+  .badge-red { background: #fff5f5; color: #e53e3e; }
 
   /* ─── TOAST ────────────────────────────────────── */
   #toast {
@@ -133,9 +135,7 @@
   .modal-close:hover { color: var(--black); }
 
   /* ─── LOGIN PAGE ───────────────────────────────── */
-  #page-login {
-    min-height: 100vh; display: flex;
-  }
+  #page-login { min-height: 100vh; display: flex; }
   .login-left {
     width: 45%; background: var(--black); display: flex; flex-direction: column;
     justify-content: center; padding: 60px; position: relative; overflow: hidden;
@@ -222,13 +222,9 @@
   .course-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
   .course-card-thumb {
     height: 140px; background: var(--black); display: flex; align-items: center; justify-content: center;
-    font-family: var(--font-display); font-size: 40px; color: var(--orange); position: relative;
-    overflow: hidden;
+    font-family: var(--font-display); font-size: 40px; color: var(--orange); position: relative; overflow: hidden;
   }
-  .course-card-thumb::after {
-    content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 4px;
-    background: var(--orange);
-  }
+  .course-card-thumb::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 4px; background: var(--orange); }
   .course-card-body { padding: 18px; }
   .course-card-title { font-family: var(--font-display); font-size: 20px; letter-spacing: .3px; line-height: 1.2; }
   .course-card-desc { font-size: 13px; color: var(--gray-600); margin-top: 6px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
@@ -247,7 +243,6 @@
   .lesson-item-info { flex: 1; }
   .lesson-item-title { font-size: 14px; font-weight: 500; }
   .lesson-item-type { font-size: 12px; color: var(--gray-400); }
-  .lesson-type-icon { font-size: 18px; }
 
   /* ─── LESSON VIEWER ────────────────────────────── */
   .lesson-viewer { background: var(--white); border: 1.5px solid var(--gray-200); border-radius: 8px; padding: 32px; }
@@ -276,7 +271,7 @@
   .option-item.selected { border-color: var(--orange); background: var(--orange-light); }
   .option-item.correct { border-color: #25a244; background: #e6f7ee; }
   .option-item.wrong { border-color: #e53e3e; background: #fff5f5; }
-  .option-radio { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--gray-300); flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all .15s; }
+  .option-radio { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--gray-200); flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all .15s; }
   .option-item.selected .option-radio { border-color: var(--orange); background: var(--orange); }
   .option-item.selected .option-radio::after { content: ''; width: 7px; height: 7px; background: var(--white); border-radius: 50%; }
   .open-answer { width: 100%; padding: 12px 14px; border: 2px solid var(--gray-200); border-radius: 6px; font-family: var(--font-body); font-size: 14px; min-height: 100px; resize: vertical; outline: none; transition: border-color .15s; }
@@ -319,7 +314,50 @@
   .option-builder { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
   .option-builder .form-control { flex: 1; }
 
-  /* responsive tweaks */
+  /* ─── ATTENDANCE CODE DISPLAY ──────────────────── */
+  .attendance-code-box {
+    background: var(--black); border-radius: 8px; padding: 28px; text-align: center;
+    border: 2px solid var(--orange);
+  }
+  .attendance-code-label { font-size: 11px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--gray-400); margin-bottom: 10px; }
+  .attendance-code-val { font-family: var(--font-display); font-size: 56px; color: var(--orange); letter-spacing: 10px; line-height: 1; }
+  .attendance-code-sub { font-size: 12px; color: #666; margin-top: 10px; }
+
+  /* ─── STUDENT CODE ENTRY ───────────────────────── */
+  .code-entry-wrap { max-width: 480px; margin: 0 auto; }
+  .code-input {
+    width: 100%; text-align: center; font-family: var(--font-display); font-size: 40px;
+    letter-spacing: 12px; padding: 20px; border: 3px solid var(--gray-200);
+    border-radius: 8px; outline: none; color: var(--black); text-transform: uppercase;
+    transition: border-color .2s;
+  }
+  .code-input:focus { border-color: var(--orange); }
+
+  /* ─── SESSION ITEM ─────────────────────────────── */
+  .session-item {
+    padding: 16px 20px; border: 1.5px solid var(--gray-200); border-radius: 8px;
+    margin-bottom: 12px; background: var(--white); display: flex; align-items: center; gap: 16px;
+  }
+  .session-date { font-family: var(--font-display); font-size: 20px; letter-spacing: .5px; min-width: 90px; }
+  .session-info { flex: 1; }
+  .session-label { font-size: 15px; font-weight: 600; }
+  .session-sub { font-size: 13px; color: var(--gray-600); margin-top: 2px; }
+  .session-code { font-family: monospace; font-size: 18px; font-weight: 700; letter-spacing: 4px; color: var(--orange); background: var(--orange-light); padding: 4px 10px; border-radius: 4px; }
+
+  /* ─── ATTENDANCE PERCENT RING ──────────────────── */
+  .att-pct { font-family: var(--font-display); font-size: 18px; }
+  .att-pct.good { color: #25a244; }
+  .att-pct.warn { color: var(--orange); }
+  .att-pct.bad { color: #e53e3e; }
+
+  /* ─── STUDENT TYPE PILL ────────────────────────── */
+  .type-pill {
+    display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px;
+    border-radius: 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .4px;
+  }
+  .type-online { background: #e8f0fe; color: #2563eb; }
+  .type-onsite { background: var(--orange-light); color: var(--orange); }
+
   @media (max-width: 900px) {
     .login-left { display: none; }
     .course-detail-layout { grid-template-columns: 1fr; }
@@ -331,29 +369,17 @@
 </head>
 <body>
 
-<!-- ─── TOAST ──────────────────────── -->
 <div id="toast"></div>
 
-<!-- ═══════════════════════════════════
-     LOGIN PAGE
-════════════════════════════════════ -->
+<!-- ═══ LOGIN ═══ -->
 <div id="page-login">
   <div class="login-left">
     <div class="login-logo">LEARN<span>FORGE</span></div>
     <p class="login-tagline">Build skills. Take exams. Track progress. All in one place.</p>
     <div class="login-features">
-      <div class="login-feature">
-        <div class="login-feature-icon">📚</div>
-        Text & Video lessons in structured courses
-      </div>
-      <div class="login-feature">
-        <div class="login-feature-icon">✍️</div>
-        Built-in exams with multiple question types
-      </div>
-      <div class="login-feature">
-        <div class="login-feature-icon">📊</div>
-        Track student progress and results
-      </div>
+      <div class="login-feature"><div class="login-feature-icon">📚</div>Text & Video lessons in structured courses</div>
+      <div class="login-feature"><div class="login-feature-icon">✍️</div>Built-in exams with multiple question types</div>
+      <div class="login-feature"><div class="login-feature-icon">📋</div>Attendance tracking for on-site students</div>
     </div>
   </div>
   <div class="login-right">
@@ -370,19 +396,17 @@
       </div>
       <button class="btn btn-primary w-full btn-lg" style="margin-top:8px" onclick="doLogin()">Sign In →</button>
       <div class="login-divider"><hr /><span>DEMO ACCOUNTS</span><hr /></div>
-      <div style="display:flex;gap:10px">
-        <button class="btn btn-ghost w-full btn-sm" onclick="quickLogin('admin@learnforge.com','admin123')">🎓 Teacher Demo</button>
-        <button class="btn btn-ghost w-full btn-sm" onclick="quickLogin('student@learnforge.com','student123')">👤 Student Demo</button>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-ghost btn-sm" style="flex:1" onclick="quickLogin('admin@learnforge.com','admin123')">🎓 Teacher</button>
+        <button class="btn btn-ghost btn-sm" style="flex:1" onclick="quickLogin('online@learnforge.com','student123')">💻 Online Student</button>
+        <button class="btn btn-ghost btn-sm" style="flex:1" onclick="quickLogin('onsite@learnforge.com','student123')">🏫 On-site Student</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════
-     APP SHELL
-════════════════════════════════════ -->
+<!-- ═══ APP SHELL ═══ -->
 <div id="app-shell" class="shell hidden">
-  <!-- SIDEBAR -->
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-logo">LEARN<span>FORGE</span></div>
     <nav class="sidebar-nav" id="sidebar-nav"></nav>
@@ -397,8 +421,6 @@
       </div>
     </div>
   </aside>
-
-  <!-- MAIN -->
   <main class="main-content">
     <div class="topbar">
       <div class="topbar-title" id="topbar-title">Dashboard</div>
@@ -408,53 +430,72 @@
   </main>
 </div>
 
-<!-- ─── MODALS CONTAINER ────────────── -->
 <div id="modals-container"></div>
 
 <script>
 /* ═══════════════════════════════════════════════
-   DATA LAYER — localStorage JSON store
+   DATA LAYER
 ═══════════════════════════════════════════════ */
 const DB = {
-  get(key) { try { return JSON.parse(localStorage.getItem('lf_' + key)) || []; } catch { return []; } },
-  set(key, val) { localStorage.setItem('lf_' + key, JSON.stringify(val)); },
-  getObj(key, def = {}) { try { return JSON.parse(localStorage.getItem('lf_' + key)) || def; } catch { return def; } },
-  setObj(key, val) { localStorage.setItem('lf_' + key, JSON.stringify(val)); }
+  get(key)        { try { return JSON.parse(localStorage.getItem('lf_' + key)) || []; } catch { return []; } },
+  set(key, val)   { localStorage.setItem('lf_' + key, JSON.stringify(val)); },
+  getObj(key, d)  { try { return JSON.parse(localStorage.getItem('lf_' + key)) || d || {}; } catch { return d || {}; } },
+  setObj(key, val){ localStorage.setItem('lf_' + key, JSON.stringify(val)); }
 };
-
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+function genCode() {
+  return Math.random().toString(36).slice(2, 8).toUpperCase(); // 6-char alphanumeric
+}
 
-/* ─── SEED DEFAULT DATA ─── */
+/* ─── SEED ─── */
+const DATA_VERSION = 'v3'; // bump this whenever seed data changes
 function seedData() {
-  if (DB.get('users').length) return;
-  const users = [
-    { id: 'admin001', name: 'Alex Teacher', email: 'admin@learnforge.com', password: 'admin123', role: 'admin' },
-    { id: 'stu001', name: 'Sam Student', email: 'student@learnforge.com', password: 'student123', role: 'student' }
-  ];
-  DB.set('users', users);
+  if (localStorage.getItem('lf_data_version') === DATA_VERSION) return;
+  // clear all old keys so stale data never blocks new seed
+  Object.keys(localStorage).filter(k => k.startsWith('lf_')).forEach(k => localStorage.removeItem(k));
+  localStorage.setItem('lf_data_version', DATA_VERSION);
 
-  const courses = [{
-    id: 'c001', title: 'JavaScript Fundamentals', description: 'Learn the core concepts of JavaScript from scratch. Variables, functions, arrays, objects and more.',
-    icon: 'JS', createdAt: Date.now(),
+  DB.set('users', [
+    { id: 'admin001', name: 'Alex Teacher',  email: 'admin@learnforge.com',  password: 'admin123',   role: 'admin',   type: null },
+    { id: 'stu001',  name: 'Sam Online',     email: 'online@learnforge.com', password: 'student123', role: 'student', type: 'online' },
+    { id: 'stu002',  name: 'Jordan Onsite',  email: 'onsite@learnforge.com', password: 'student123', role: 'student', type: 'onsite' }
+  ]);
+
+  DB.set('courses', [{
+    id: 'c001',
+    title: 'JavaScript Fundamentals',
+    description: 'Learn the core concepts of JavaScript from scratch.',
+    icon: 'JS',
+    attendanceThreshold: 75,
+    createdAt: Date.now(),
     lessons: [
-      { id: 'l001', title: 'Introduction to Variables', type: 'text', content: 'Variables are containers for storing data values. In JavaScript, we use `let`, `const`, and `var` to declare variables.\n\n**let** — block-scoped variable that can be reassigned.\n**const** — block-scoped variable that cannot be reassigned.\n**var** — function-scoped (older style, avoid in modern JS).\n\nExample:\n```js\nlet name = "Alice";\nconst age = 30;\nvar city = "Berlin"; // avoid this\n```\n\nAlways prefer `const` by default, and use `let` when you need to reassign. Avoid `var` in modern JavaScript.' },
-      { id: 'l002', title: 'Functions Explained', type: 'video', videoUrl: 'https://www.youtube.com/embed/N8ap4k_1QEQ', content: 'Functions are reusable blocks of code that perform a specific task.' },
-      { id: 'l003', title: 'Arrays & Objects', type: 'text', content: 'Arrays store ordered lists of values. Objects store key-value pairs.\n\n**Array:**\n```js\nconst fruits = ["apple", "banana", "cherry"];\n```\n\n**Object:**\n```js\nconst person = { name: "Bob", age: 25 };\n```\n\nYou can access array items by index (starting at 0) and object properties by key using dot notation or bracket notation.' }
+      { id: 'l001', title: 'Introduction to Variables', type: 'text',  content: 'Variables are containers for storing data values. In JavaScript, we use `let`, `const`, and `var` to declare variables.\n\n**let** — block-scoped variable that can be reassigned.\n**const** — block-scoped variable that cannot be reassigned.\n**var** — function-scoped (older style, avoid in modern JS).\n\nAlways prefer `const` by default, and use `let` when you need to reassign.' },
+      { id: 'l002', title: 'Functions Explained',       type: 'video', videoUrl: 'https://www.youtube.com/embed/N8ap4k_1QEQ', content: 'Functions are reusable blocks of code that perform a specific task.' },
+      { id: 'l003', title: 'Arrays & Objects',          type: 'text',  content: 'Arrays store ordered lists of values. Objects store key-value pairs.\n\n**Array:**\n```js\nconst fruits = ["apple", "banana", "cherry"];\n```\n\n**Object:**\n```js\nconst person = { name: "Bob", age: 25 };\n```' }
     ],
     exam: {
-      id: 'e001', title: 'JS Fundamentals Exam', questions: [
-        { id: 'q001', type: 'mcq', text: 'Which keyword is used to declare a block-scoped variable that cannot be reassigned?', options: ['var', 'let', 'const', 'function'], correct: 2 },
-        { id: 'q002', type: 'mcq', text: 'What does the following return: typeof []?', options: ['"array"', '"object"', '"list"', '"undefined"'], correct: 1 },
-        { id: 'q003', type: 'open', text: 'Explain in your own words what a JavaScript function does and why we use them.' },
-        { id: 'q004', type: 'mcq', text: 'How do you access the first element of an array called `items`?', options: ['items[1]', 'items.first()', 'items[0]', 'items.get(0)'], correct: 2 }
+      id: 'e001', title: 'JS Fundamentals Exam',
+      questions: [
+        { id: 'q001', type: 'mcq',  text: 'Which keyword declares a block-scoped variable that cannot be reassigned?', options: ['var','let','const','function'], correct: 2 },
+        { id: 'q002', type: 'mcq',  text: 'What does typeof [] return?', options: ['"array"','"object"','"list"','"undefined"'], correct: 1 },
+        { id: 'q003', type: 'open', text: 'Explain in your own words what a JavaScript function does.' },
+        { id: 'q004', type: 'mcq',  text: 'How do you access the first element of an array `items`?', options: ['items[1]','items.first()','items[0]','items.get(0)'], correct: 2 }
       ]
     }
-  }];
-  DB.set('courses', courses);
+  }]);
 
   DB.set('enrollments', [
-    { id: 'en001', studentId: 'stu001', courseId: 'c001', completedLessons: [], enrolledAt: Date.now() }
+    { id: 'en001', studentId: 'stu001', courseId: 'c001', completedLessons: [], enrolledAt: Date.now() },
+    { id: 'en002', studentId: 'stu002', courseId: 'c001', completedLessons: [], enrolledAt: Date.now() }
   ]);
+
+  // Seed a few past sessions so attendance page isn't empty
+  const pastSessions = [
+    { id: 's001', courseId: 'c001', label: 'Week 1 — Monday',   date: Date.now() - 14*86400000, code: 'ABC123', attendees: ['stu002'] },
+    { id: 's002', courseId: 'c001', label: 'Week 1 — Wednesday', date: Date.now() - 12*86400000, code: 'DEF456', attendees: ['stu002'] },
+    { id: 's003', courseId: 'c001', label: 'Week 2 — Monday',   date: Date.now() -  7*86400000, code: 'GHI789', attendees: [] }
+  ];
+  DB.set('sessions', pastSessions);
   DB.set('exam_results', []);
 }
 
@@ -465,58 +506,56 @@ let currentUser = null;
 
 function doLogin() {
   const email = document.getElementById('login-email').value.trim();
-  const pass = document.getElementById('login-pass').value;
-  const users = DB.get('users');
-  const user = users.find(u => u.email === email && u.password === pass);
+  const pass  = document.getElementById('login-pass').value;
+  const user  = DB.get('users').find(u => u.email === email && u.password === pass);
   if (!user) { showToast('❌ Invalid email or password'); return; }
   loginSuccess(user);
 }
-
 function quickLogin(email, pass) {
   document.getElementById('login-email').value = email;
-  document.getElementById('login-pass').value = pass;
+  document.getElementById('login-pass').value  = pass;
   doLogin();
 }
-
 function loginSuccess(user) {
   currentUser = user;
   document.getElementById('page-login').classList.add('hidden');
   document.getElementById('app-shell').classList.remove('hidden');
-  document.getElementById('sidebar-name').textContent = user.name;
-  document.getElementById('sidebar-role').textContent = user.role === 'admin' ? 'Teacher' : 'Student';
+  document.getElementById('sidebar-name').textContent   = user.name;
   document.getElementById('sidebar-avatar').textContent = user.name.charAt(0).toUpperCase();
+  let roleLabel = user.role === 'admin' ? 'Teacher' : (user.type === 'onsite' ? 'On-site Student' : 'Online Student');
+  document.getElementById('sidebar-role').textContent = roleLabel;
   buildSidebar();
   navigate('dashboard');
   showToast(`👋 Welcome back, ${user.name.split(' ')[0]}!`);
 }
-
 function doLogout() {
   currentUser = null;
   document.getElementById('app-shell').classList.add('hidden');
   document.getElementById('page-login').classList.remove('hidden');
   document.getElementById('login-email').value = '';
-  document.getElementById('login-pass').value = '';
+  document.getElementById('login-pass').value  = '';
 }
 
 /* ═══════════════════════════════════════════════
    ROUTER
 ═══════════════════════════════════════════════ */
 let currentRoute = null;
-let routeParams = {};
+let routeParams  = {};
 
 function navigate(route, params = {}) {
   currentRoute = route;
-  routeParams = params;
+  routeParams  = params;
   const routes = {
-    dashboard: renderDashboard,
-    students: renderStudents,
-    courses: renderCourses,
-    'course-detail': renderCourseDetail,
-    'lesson-view': renderLessonView,
-    'exam-view': renderExamView,
-    'my-courses': renderMyCourses
+    dashboard:        renderDashboard,
+    students:         renderStudents,
+    courses:          renderCourses,
+    'course-detail':  renderCourseDetail,
+    'lesson-view':    renderLessonView,
+    'exam-view':      renderExamView,
+    'my-courses':     renderMyCourses,
+    attendance:       renderAttendancePage,
+    'check-in':       renderCheckIn
   };
-  // update sidebar active
   document.querySelectorAll('.nav-item').forEach(el => {
     el.classList.toggle('active', el.dataset.route === route);
   });
@@ -524,23 +563,42 @@ function navigate(route, params = {}) {
 }
 
 /* ═══════════════════════════════════════════════
-   SIDEBAR BUILDER
+   SIDEBAR
 ═══════════════════════════════════════════════ */
 function buildSidebar() {
-  const nav = document.getElementById('sidebar-nav');
+  const nav     = document.getElementById('sidebar-nav');
   const isAdmin = currentUser.role === 'admin';
-  const items = isAdmin ? [
-    { section: 'Overview' },
-    { route: 'dashboard', icon: '⊞', label: 'Dashboard' },
-    { section: 'Manage' },
-    { route: 'students', icon: '👥', label: 'Students' },
-    { route: 'courses', icon: '📚', label: 'Courses' }
-  ] : [
-    { section: 'Overview' },
-    { route: 'dashboard', icon: '⊞', label: 'Dashboard' },
-    { section: 'Learning' },
-    { route: 'my-courses', icon: '📚', label: 'My Courses' }
-  ];
+  const isOnsite = currentUser.role === 'student' && currentUser.type === 'onsite';
+
+  let items = [];
+  if (isAdmin) {
+    items = [
+      { section: 'Overview' },
+      { route: 'dashboard',  icon: '⊞',  label: 'Dashboard' },
+      { section: 'Manage' },
+      { route: 'students',   icon: '👥', label: 'Students' },
+      { route: 'courses',    icon: '📚', label: 'Courses' },
+      { route: 'attendance', icon: '📋', label: 'Attendance' }
+    ];
+  } else if (isOnsite) {
+    items = [
+      { section: 'Overview' },
+      { route: 'dashboard',  icon: '⊞',  label: 'Dashboard' },
+      { section: 'Learning' },
+      { route: 'my-courses', icon: '📚', label: 'My Courses' },
+      { section: 'Attendance' },
+      { route: 'check-in',   icon: '📋', label: 'Check In' },
+      { route: 'attendance', icon: '📊', label: 'My Attendance' }
+    ];
+  } else {
+    items = [
+      { section: 'Overview' },
+      { route: 'dashboard',  icon: '⊞',  label: 'Dashboard' },
+      { section: 'Learning' },
+      { route: 'my-courses', icon: '📚', label: 'My Courses' }
+    ];
+  }
+
   nav.innerHTML = items.map(item => {
     if (item.section) return `<div class="nav-section">${item.section}</div>`;
     return `<div class="nav-item" data-route="${item.route}" onclick="navigate('${item.route}')">
@@ -550,32 +608,22 @@ function buildSidebar() {
 }
 
 /* ═══════════════════════════════════════════════
-   TOAST
+   TOAST & MODAL
 ═══════════════════════════════════════════════ */
 function showToast(msg) {
   const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
+  t.textContent = msg; t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 3200);
 }
-
-/* ═══════════════════════════════════════════════
-   MODAL HELPER
-═══════════════════════════════════════════════ */
 function openModal(title, bodyHTML, footerHTML = '') {
   closeModal();
   const el = document.createElement('div');
-  el.className = 'modal-overlay';
-  el.id = 'active-modal';
-  el.innerHTML = `
-    <div class="modal">
-      <div class="modal-header">
-        <h3>${title}</h3>
-        <button class="modal-close" onclick="closeModal()">✕</button>
-      </div>
-      <div class="modal-body">${bodyHTML}</div>
-      ${footerHTML ? `<div class="modal-footer">${footerHTML}</div>` : ''}
-    </div>`;
+  el.className = 'modal-overlay'; el.id = 'active-modal';
+  el.innerHTML = `<div class="modal">
+    <div class="modal-header"><h3>${title}</h3><button class="modal-close" onclick="closeModal()">✕</button></div>
+    <div class="modal-body">${bodyHTML}</div>
+    ${footerHTML ? `<div class="modal-footer">${footerHTML}</div>` : ''}
+  </div>`;
   el.addEventListener('click', e => { if (e.target === el) closeModal(); });
   document.getElementById('modals-container').appendChild(el);
 }
@@ -585,25 +633,47 @@ function closeModal() {
 }
 
 /* ═══════════════════════════════════════════════
-   PAGE: ADMIN DASHBOARD
+   HELPERS — Attendance calculations
+═══════════════════════════════════════════════ */
+function getStudentAttendance(studentId, courseId) {
+  const sessions = DB.get('sessions').filter(s => s.courseId === courseId);
+  if (!sessions.length) return { attended: 0, total: 0, pct: 0 };
+  const attended = sessions.filter(s => s.attendees.includes(studentId)).length;
+  const pct = Math.round((attended / sessions.length) * 100);
+  return { attended, total: sessions.length, pct };
+}
+
+function formatDate(ts) {
+  return new Date(ts).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+}
+
+function attClass(pct) {
+  if (pct >= 75) return 'good';
+  if (pct >= 50) return 'warn';
+  return 'bad';
+}
+
+/* ═══════════════════════════════════════════════
+   PAGE: DASHBOARD
 ═══════════════════════════════════════════════ */
 function renderDashboard() {
-  const title = currentUser.role === 'admin' ? 'Dashboard' : 'My Dashboard';
-  document.getElementById('topbar-title').textContent = title;
+  document.getElementById('topbar-title').textContent = 'Dashboard';
   document.getElementById('topbar-actions').innerHTML = '';
 
   if (currentUser.role === 'admin') {
-    const users = DB.get('users').filter(u => u.role === 'student');
-    const courses = DB.get('courses');
-    const results = DB.get('exam_results');
-    const enrollments = DB.get('enrollments');
+    const students    = DB.get('users').filter(u => u.role === 'student');
+    const online      = students.filter(s => s.type === 'online');
+    const onsite      = students.filter(s => s.type === 'onsite');
+    const courses     = DB.get('courses');
+    const results     = DB.get('exam_results');
+    const sessions    = DB.get('sessions');
 
     document.getElementById('page-content').innerHTML = `
       <div class="stats-grid">
         <div class="stat-card accent">
           <div class="stat-label">Total Students</div>
-          <div class="stat-value">${users.length}</div>
-          <div class="stat-sub">Registered accounts</div>
+          <div class="stat-value">${students.length}</div>
+          <div class="stat-sub">${online.length} online · ${onsite.length} on-site</div>
         </div>
         <div class="stat-card">
           <div class="stat-label">Courses</div>
@@ -611,9 +681,9 @@ function renderDashboard() {
           <div class="stat-sub">Active courses</div>
         </div>
         <div class="stat-card">
-          <div class="stat-label">Enrollments</div>
-          <div class="stat-value">${enrollments.length}</div>
-          <div class="stat-sub">Course enrollments</div>
+          <div class="stat-label">Sessions Held</div>
+          <div class="stat-value">${sessions.length}</div>
+          <div class="stat-sub">Attendance sessions</div>
         </div>
         <div class="stat-card">
           <div class="stat-label">Exams Taken</div>
@@ -621,95 +691,112 @@ function renderDashboard() {
           <div class="stat-sub">Submitted exams</div>
         </div>
       </div>
-
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
         <div class="card">
           <div class="section-header" style="margin-bottom:16px">
             <div class="card-title">Recent Students</div>
             <button class="btn btn-ghost btn-sm" onclick="navigate('students')">View all</button>
           </div>
-          ${users.length === 0 ? `<p class="text-gray text-sm">No students yet.</p>` : `
-          <div class="table-wrap">
-            <table>
-              <thead><tr><th>Name</th><th>Email</th></tr></thead>
-              <tbody>${users.slice(-5).reverse().map(u => `
-                <tr><td><strong>${u.name}</strong></td><td class="text-gray">${u.email}</td></tr>
-              `).join('')}</tbody>
-            </table>
-          </div>`}
+          ${students.length === 0 ? `<p class="text-gray text-sm">No students yet.</p>` : `
+          <table><thead><tr><th>Name</th><th>Type</th><th>Email</th></tr></thead><tbody>
+            ${students.slice(-5).reverse().map(u => `<tr>
+              <td><strong>${u.name}</strong></td>
+              <td><span class="type-pill type-${u.type}">${u.type === 'online' ? '💻 Online' : '🏫 On-site'}</span></td>
+              <td class="text-gray">${u.email}</td>
+            </tr>`).join('')}
+          </tbody></table>`}
         </div>
         <div class="card">
           <div class="section-header" style="margin-bottom:16px">
-            <div class="card-title">Recent Exams</div>
+            <div class="card-title">Recent Exam Results</div>
           </div>
           ${results.length === 0 ? `<p class="text-gray text-sm">No exam results yet.</p>` : `
-          <div class="table-wrap">
-            <table>
-              <thead><tr><th>Student</th><th>Course</th><th>Score</th></tr></thead>
-              <tbody>${results.slice(-8).reverse().map(r => {
-                const u = DB.get('users').find(x => x.id === r.studentId);
-                const c = DB.get('courses').find(x => x.id === r.courseId);
-                return `<tr>
-                  <td>${u ? u.name : '—'}</td>
-                  <td class="text-gray">${c ? c.title : '—'}</td>
-                  <td><span class="badge ${r.score >= 70 ? 'badge-green' : 'badge-orange'}">${r.score}%</span></td>
-                </tr>`;
-              }).join('')}</tbody>
-            </table>
-          </div>`}
+          <table><thead><tr><th>Student</th><th>Course</th><th>Score</th></tr></thead><tbody>
+            ${results.slice(-6).reverse().map(r => {
+              const u = DB.get('users').find(x => x.id === r.studentId);
+              const c = DB.get('courses').find(x => x.id === r.courseId);
+              return `<tr>
+                <td>${u ? u.name : '—'}</td>
+                <td class="text-gray">${c ? c.title : '—'}</td>
+                <td><span class="badge ${r.score >= 70 ? 'badge-green' : 'badge-orange'}">${r.score}%</span></td>
+              </tr>`;
+            }).join('')}
+          </tbody></table>`}
         </div>
       </div>`;
   } else {
     // Student dashboard
     const enrollments = DB.get('enrollments').filter(e => e.studentId === currentUser.id);
-    const courses = DB.get('courses');
-    const results = DB.get('exam_results').filter(r => r.studentId === currentUser.id);
+    const courses     = DB.get('courses');
+    const results     = DB.get('exam_results').filter(r => r.studentId === currentUser.id);
+    const isOnsite    = currentUser.type === 'onsite';
 
     const enrolled = enrollments.map(e => {
-      const c = courses.find(x => x.id === e.courseId);
-      const total = c ? c.lessons.length : 0;
-      const done = e.completedLessons.length;
-      const pct = total > 0 ? Math.round((done / total) * 100) : 0;
-      const result = results.find(r => r.courseId === e.courseId);
-      return { ...e, course: c, total, done, pct, result };
+      const c       = courses.find(x => x.id === e.courseId);
+      const total   = c ? c.lessons.length : 0;
+      const done    = e.completedLessons.length;
+      const pct     = total > 0 ? Math.round((done / total) * 100) : 0;
+      const result  = results.find(r => r.courseId === e.courseId);
+      const att     = isOnsite ? getStudentAttendance(currentUser.id, e.courseId) : null;
+      return { ...e, course: c, total, done, pct, result, att };
     }).filter(e => e.course);
 
-    document.getElementById('page-content').innerHTML = `
+    const statCards = `
       <div class="stats-grid">
         <div class="stat-card accent">
           <div class="stat-label">Enrolled Courses</div>
           <div class="stat-value">${enrolled.length}</div>
-          <div class="stat-sub">Active enrollments</div>
+          <div class="stat-sub">${isOnsite ? '🏫 On-site track' : '💻 Online track'}</div>
         </div>
         <div class="stat-card">
           <div class="stat-label">Exams Taken</div>
           <div class="stat-value">${results.length}</div>
           <div class="stat-sub">Completed exams</div>
         </div>
-        <div class="stat-card">
+        ${isOnsite ? `<div class="stat-card">
+          <div class="stat-label">Avg Attendance</div>
+          <div class="stat-value" style="color:var(--orange)">${enrolled.length > 0 ? Math.round(enrolled.reduce((s,e) => s + (e.att ? e.att.pct : 0), 0) / enrolled.length) : 0}%</div>
+          <div class="stat-sub">Across all courses</div>
+        </div>` : `<div class="stat-card">
           <div class="stat-label">Best Score</div>
           <div class="stat-value">${results.length ? Math.max(...results.map(r => r.score)) + '%' : '—'}</div>
           <div class="stat-sub">Highest exam score</div>
-        </div>
-      </div>
+        </div>`}
+      </div>`;
+
+    document.getElementById('page-content').innerHTML = statCards + `
       <div class="card">
         <div class="card-title" style="margin-bottom:16px">Your Courses</div>
-        ${enrolled.length === 0 ? `<p class="text-gray text-sm">You are not enrolled in any courses.</p>` : enrolled.map(e => `
-          <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--gray-200)">
-            <div style="flex:1">
-              <div style="font-weight:600;font-size:15px">${e.course.title}</div>
-              <div style="margin-top:6px;display:flex;align-items:center;gap:10px">
-                <div class="progress-bar" style="width:160px"><div class="progress-fill" style="width:${e.pct}%"></div></div>
-                <span class="text-sm text-gray">${e.done}/${e.total} lessons</span>
+        ${enrolled.length === 0 ? `<p class="text-gray text-sm">Not enrolled in any courses.</p>` :
+          enrolled.map(e => `
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--gray-200)">
+              <div style="flex:1">
+                <div style="font-weight:600;font-size:15px">${e.course.title}</div>
+                ${isOnsite ? `
+                  <div style="margin-top:6px;display:flex;align-items:center;gap:12px">
+                    <span class="text-sm text-gray">Attendance</span>
+                    <div class="progress-bar" style="width:120px"><div class="progress-fill" style="width:${e.att ? e.att.pct : 0}%"></div></div>
+                    <span class="att-pct ${attClass(e.att ? e.att.pct : 0)} text-sm">${e.att ? e.att.pct : 0}% (${e.att ? e.att.attended : 0}/${e.att ? e.att.total : 0})</span>
+                    ${e.att && e.att.pct < (e.course.attendanceThreshold||75) ? `<span class="badge badge-red">⚠ Below ${e.course.attendanceThreshold||75}%</span>` : ''}
+                  </div>` : `
+                  <div style="margin-top:6px;display:flex;align-items:center;gap:10px">
+                    <div class="progress-bar" style="width:160px"><div class="progress-fill" style="width:${e.pct}%"></div></div>
+                    <span class="text-sm text-gray">${e.done}/${e.total} lessons</span>
+                  </div>`}
               </div>
-            </div>
-            <div style="display:flex;align-items:center;gap:10px">
-              ${e.result ? `<span class="badge badge-green">Exam: ${e.result.score}%</span>` : ''}
-              <button class="btn btn-primary btn-sm" onclick="navigate('course-detail', {courseId:'${e.course.id}'})">Continue →</button>
-            </div>
-          </div>
-        `).join('')}
-      </div>`;
+              <div style="display:flex;align-items:center;gap:10px">
+                ${e.result ? `<span class="badge badge-green">Exam: ${e.result.score}%</span>` : ''}
+                <button class="btn btn-primary btn-sm" onclick="navigate('course-detail',{courseId:'${e.course.id}'})">Continue →</button>
+              </div>
+            </div>`).join('')}
+      </div>
+      ${isOnsite ? `<div class="card" style="margin-top:20px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+          <div class="card-title">Quick Check-In</div>
+          <button class="btn btn-primary btn-sm" onclick="navigate('check-in')">Open Check-In →</button>
+        </div>
+        <p class="text-gray text-sm">Ask your teacher for today's session code and enter it to mark your attendance.</p>
+      </div>` : ''}`;
   }
 }
 
@@ -723,98 +810,99 @@ function renderStudents() {
 }
 
 function refreshStudentsTable() {
-  const students = DB.get('users').filter(u => u.role === 'student');
+  const students    = DB.get('users').filter(u => u.role === 'student');
   const enrollments = DB.get('enrollments');
-  const results = DB.get('exam_results');
-  const courses = DB.get('courses');
+  const results     = DB.get('exam_results');
+  const courses     = DB.get('courses');
 
-  document.getElementById('page-content').innerHTML = `
-    <div class="card">
-      <div class="table-wrap">
-        ${students.length === 0 ? `<div class="empty-state"><span class="empty-icon">👥</span><h3>No students yet</h3><p>Add your first student using the button above.</p></div>` : `
-        <table>
-          <thead><tr><th>Name</th><th>Email</th><th>Enrolled In</th><th>Exams</th><th>Actions</th></tr></thead>
-          <tbody>${students.map(s => {
-            const sEnrollments = enrollments.filter(e => e.studentId === s.id);
-            const sResults = results.filter(r => r.studentId === s.id);
-            return `<tr>
-              <td><div style="display:flex;align-items:center;gap:10px">
-                <div class="sidebar-avatar" style="width:30px;height:30px;font-size:12px">${s.name.charAt(0)}</div>
-                <strong>${s.name}</strong>
-              </div></td>
-              <td class="text-gray">${s.email}</td>
-              <td>${sEnrollments.length > 0 ? sEnrollments.map(e => {
-                const c = courses.find(x => x.id === e.courseId);
-                return c ? `<span class="badge badge-gray" style="margin-right:4px">${c.title}</span>` : '';
-              }).join('') : '<span class="text-gray text-sm">None</span>'}</td>
-              <td>${sResults.length > 0 ? `<span class="badge badge-orange">${sResults.length} exam(s)</span>` : '<span class="text-gray text-sm">—</span>'}</td>
-              <td><div style="display:flex;gap:6px">
-                <button class="btn btn-ghost btn-sm" onclick="openEnrollModal('${s.id}', '${s.name}')">Enroll</button>
-                <button class="btn btn-danger btn-sm" onclick="deleteStudent('${s.id}')">Remove</button>
-              </div></td>
-            </tr>`;
-          }).join('')}</tbody>
-        </table>`}
-      </div>
-    </div>`;
+  document.getElementById('page-content').innerHTML = `<div class="card"><div class="table-wrap">
+    ${students.length === 0 ? `<div class="empty-state"><span class="empty-icon">👥</span><h3>No students yet</h3><p>Add your first student above.</p></div>` : `
+    <table>
+      <thead><tr><th>Name</th><th>Type</th><th>Email</th><th>Enrolled In</th><th>Exams</th><th>Actions</th></tr></thead>
+      <tbody>${students.map(s => {
+        const sEnroll  = enrollments.filter(e => e.studentId === s.id);
+        const sResults = results.filter(r => r.studentId === s.id);
+        return `<tr>
+          <td><div style="display:flex;align-items:center;gap:10px">
+            <div class="sidebar-avatar" style="width:30px;height:30px;font-size:12px">${s.name.charAt(0)}</div>
+            <strong>${s.name}</strong>
+          </div></td>
+          <td><span class="type-pill type-${s.type}">${s.type === 'online' ? '💻 Online' : '🏫 On-site'}</span></td>
+          <td class="text-gray">${s.email}</td>
+          <td>${sEnroll.length > 0 ? sEnroll.map(e => {
+            const c = courses.find(x => x.id === e.courseId);
+            return c ? `<span class="badge badge-gray" style="margin-right:4px">${c.title}</span>` : '';
+          }).join('') : '<span class="text-gray text-sm">None</span>'}</td>
+          <td>${sResults.length > 0 ? `<span class="badge badge-orange">${sResults.length} exam(s)</span>` : '<span class="text-gray text-sm">—</span>'}</td>
+          <td><div style="display:flex;gap:6px">
+            <button class="btn btn-ghost btn-sm" onclick="openEnrollModal('${s.id}','${s.name}')">Enroll</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteStudent('${s.id}')">Remove</button>
+          </div></td>
+        </tr>`;
+      }).join('')}</tbody>
+    </table>`}
+  </div></div>`;
 }
 
 function openAddStudentModal() {
   openModal('Add New Student',
     `<div class="form-group"><label class="form-label">Full Name</label><input type="text" id="ns-name" class="form-control" placeholder="Jane Doe" /></div>
      <div class="form-group"><label class="form-label">Email Address</label><input type="email" id="ns-email" class="form-control" placeholder="jane@example.com" /></div>
-     <div class="form-group"><label class="form-label">Password</label><input type="password" id="ns-pass" class="form-control" placeholder="Set a password" /></div>`,
+     <div class="form-group"><label class="form-label">Password</label><input type="password" id="ns-pass" class="form-control" placeholder="Set a password" /></div>
+     <div class="form-group"><label class="form-label">Student Type</label>
+       <select id="ns-type" class="form-control">
+         <option value="online">💻 Online — completes lessons + exam</option>
+         <option value="onsite">🏫 On-site — attends classes + exam</option>
+       </select>
+     </div>`,
     `<button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
      <button class="btn btn-primary" onclick="addStudent()">Create Account</button>`
   );
 }
 
 function addStudent() {
-  const name = document.getElementById('ns-name').value.trim();
+  const name  = document.getElementById('ns-name').value.trim();
   const email = document.getElementById('ns-email').value.trim();
-  const pass = document.getElementById('ns-pass').value;
+  const pass  = document.getElementById('ns-pass').value;
+  const type  = document.getElementById('ns-type').value;
   if (!name || !email || !pass) { showToast('⚠️ All fields are required'); return; }
   const users = DB.get('users');
   if (users.find(u => u.email === email)) { showToast('⚠️ Email already exists'); return; }
-  users.push({ id: uid(), name, email, password: pass, role: 'student' });
+  users.push({ id: uid(), name, email, password: pass, role: 'student', type });
   DB.set('users', users);
-  closeModal();
-  showToast('✅ Student account created');
-  refreshStudentsTable();
+  closeModal(); showToast('✅ Student account created'); refreshStudentsTable();
 }
 
 function deleteStudent(id) {
   if (!confirm('Remove this student? Their enrollments and exam results will also be deleted.')) return;
-  DB.set('users', DB.get('users').filter(u => u.id !== id));
-  DB.set('enrollments', DB.get('enrollments').filter(e => e.studentId !== id));
+  DB.set('users',        DB.get('users').filter(u => u.id !== id));
+  DB.set('enrollments',  DB.get('enrollments').filter(e => e.studentId !== id));
   DB.set('exam_results', DB.get('exam_results').filter(r => r.studentId !== id));
-  showToast('🗑️ Student removed');
-  refreshStudentsTable();
+  // remove from session attendees
+  const sessions = DB.get('sessions').map(s => ({ ...s, attendees: s.attendees.filter(a => a !== id) }));
+  DB.set('sessions', sessions);
+  showToast('🗑️ Student removed'); refreshStudentsTable();
 }
 
 function openEnrollModal(studentId, studentName) {
-  const courses = DB.get('courses');
+  const courses  = DB.get('courses');
   const enrolled = DB.get('enrollments').filter(e => e.studentId === studentId).map(e => e.courseId);
-  const available = courses.filter(c => !enrolled.includes(c.id));
-  if (available.length === 0) { showToast('ℹ️ Student is enrolled in all courses'); return; }
+  const avail    = courses.filter(c => !enrolled.includes(c.id));
+  if (!avail.length) { showToast('ℹ️ Student is enrolled in all courses'); return; }
   openModal(`Enroll ${studentName}`,
     `<div class="form-group"><label class="form-label">Select Course</label>
-     <select id="enroll-course" class="form-control">
-       ${available.map(c => `<option value="${c.id}">${c.title}</option>`).join('')}
-     </select></div>`,
+     <select id="enroll-course" class="form-control">${avail.map(c => `<option value="${c.id}">${c.title}</option>`).join('')}</select></div>`,
     `<button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
      <button class="btn btn-primary" onclick="enrollStudent('${studentId}')">Enroll →</button>`
   );
 }
 
 function enrollStudent(studentId) {
-  const courseId = document.getElementById('enroll-course').value;
+  const courseId    = document.getElementById('enroll-course').value;
   const enrollments = DB.get('enrollments');
   enrollments.push({ id: uid(), studentId, courseId, completedLessons: [], enrolledAt: Date.now() });
   DB.set('enrollments', enrollments);
-  closeModal();
-  showToast('✅ Student enrolled in course');
-  refreshStudentsTable();
+  closeModal(); showToast('✅ Student enrolled'); refreshStudentsTable();
 }
 
 /* ═══════════════════════════════════════════════
@@ -829,394 +917,46 @@ function renderCourses() {
 function refreshCoursesGrid() {
   const courses = DB.get('courses');
   document.getElementById('page-content').innerHTML = courses.length === 0
-    ? `<div class="empty-state"><span class="empty-icon">📚</span><h3>No courses yet</h3><p>Create your first course to get started.</p></div>`
+    ? `<div class="empty-state"><span class="empty-icon">📚</span><h3>No courses yet</h3><p>Create your first course.</p></div>`
     : `<div class="courses-grid">${courses.map(c => `
-        <div class="course-card" onclick="navigate('course-detail', {courseId:'${c.id}'})">
+        <div class="course-card" onclick="navigate('course-detail',{courseId:'${c.id}'})">
           <div class="course-card-thumb">${c.icon || '📚'}</div>
           <div class="course-card-body">
             <div class="course-card-title">${c.title}</div>
             <div class="course-card-desc">${c.description}</div>
             <div class="course-card-meta">
               <div class="course-meta-item"><strong>${c.lessons.length}</strong> Lessons</div>
-              <div class="course-meta-item">${c.exam ? `<span class="badge badge-orange">Has Exam</span>` : `<span class="badge badge-gray">No Exam</span>`}</div>
+              <div>${c.exam ? `<span class="badge badge-orange">Has Exam</span>` : `<span class="badge badge-gray">No Exam</span>`}</div>
             </div>
           </div>
-        </div>
-      `).join('')}</div>`;
+        </div>`).join('')}</div>`;
 }
 
 function openCreateCourseModal() {
   openModal('Create New Course',
     `<div class="form-group"><label class="form-label">Course Title</label><input type="text" id="nc-title" class="form-control" placeholder="e.g. Python Fundamentals" /></div>
      <div class="form-group"><label class="form-label">Description</label><textarea id="nc-desc" class="form-control" placeholder="What will students learn?"></textarea></div>
-     <div class="form-group"><label class="form-label">Icon (emoji)</label><input type="text" id="nc-icon" class="form-control" placeholder="📚" maxlength="2" /></div>`,
+     <div class="form-group"><label class="form-label">Icon (emoji)</label><input type="text" id="nc-icon" class="form-control" placeholder="📚" maxlength="2" /></div>
+     <div class="form-group"><label class="form-label">On-site Attendance Threshold (%)</label><input type="number" id="nc-thresh" class="form-control" value="75" min="0" max="100" /></div>`,
     `<button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
      <button class="btn btn-primary" onclick="createCourse()">Create Course</button>`
   );
 }
 
 function createCourse() {
-  const title = document.getElementById('nc-title').value.trim();
-  const desc = document.getElementById('nc-desc').value.trim();
-  const icon = document.getElementById('nc-icon').value.trim() || '📚';
+  const title  = document.getElementById('nc-title').value.trim();
+  const desc   = document.getElementById('nc-desc').value.trim();
+  const icon   = document.getElementById('nc-icon').value.trim() || '📚';
+  const thresh = parseInt(document.getElementById('nc-thresh').value) || 75;
   if (!title) { showToast('⚠️ Title is required'); return; }
   const courses = DB.get('courses');
-  courses.push({ id: uid(), title, description: desc, icon, lessons: [], exam: null, createdAt: Date.now() });
+  courses.push({ id: uid(), title, description: desc, icon, attendanceThreshold: thresh, lessons: [], exam: null, createdAt: Date.now() });
   DB.set('courses', courses);
-  closeModal();
-  showToast('✅ Course created');
-  refreshCoursesGrid();
+  closeModal(); showToast('✅ Course created'); refreshCoursesGrid();
 }
 
 /* ═══════════════════════════════════════════════
-   PAGE: COURSE DETAIL (Admin)
-═══════════════════════════════════════════════ */
-function renderCourseDetail({ courseId }) {
-  const courses = DB.get('courses');
-  const course = courses.find(c => c.id === courseId);
-  if (!course) { navigate('courses'); return; }
-
-  document.getElementById('topbar-title').textContent = course.title;
-  document.getElementById('topbar-actions').innerHTML = `<button class="btn btn-ghost btn-sm" onclick="navigate('courses')">← Back</button>`;
-
-  document.getElementById('page-content').innerHTML = `
-    <div class="tabs">
-      <div class="tab active" id="tab-lessons" onclick="switchCourseTab('lessons','${courseId}')">Lessons</div>
-      <div class="tab" id="tab-exam" onclick="switchCourseTab('exam','${courseId}')">Exam Builder</div>
-    </div>
-    <div id="course-tab-content"></div>`;
-
-  renderLessonsTab(courseId);
-}
-
-function switchCourseTab(tab, courseId) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.getElementById('tab-' + tab).classList.add('active');
-  if (tab === 'lessons') renderLessonsTab(courseId);
-  else renderExamBuilderTab(courseId);
-}
-
-function renderLessonsTab(courseId) {
-  const courses = DB.get('courses');
-  const course = courses.find(c => c.id === courseId);
-  document.getElementById('course-tab-content').innerHTML = `
-    <div class="section-header">
-      <div class="section-title">Lessons (${course.lessons.length})</div>
-      <button class="btn btn-primary btn-sm" onclick="openAddLessonModal('${courseId}')">+ Add Lesson</button>
-    </div>
-    ${course.lessons.length === 0 ? `<div class="empty-state"><span class="empty-icon">📝</span><h3>No lessons yet</h3><p>Add your first lesson to this course.</p></div>` : `
-    <div class="lesson-list">
-      ${course.lessons.map((l, i) => `
-        <div class="lesson-item">
-          <div class="lesson-num">${i + 1}</div>
-          <div class="lesson-item-info">
-            <div class="lesson-item-title">${l.title}</div>
-            <div class="lesson-item-type">${l.type === 'video' ? '🎬 Video' : '📄 Text'}</div>
-          </div>
-          <div style="display:flex;gap:6px">
-            <button class="btn btn-ghost btn-sm" onclick="openEditLessonModal('${courseId}','${l.id}')">Edit</button>
-            <button class="btn btn-danger btn-sm" onclick="deleteLesson('${courseId}','${l.id}')">Del</button>
-          </div>
-        </div>
-      `).join('')}
-    </div>`}`;
-}
-
-function openAddLessonModal(courseId) {
-  openModal('Add Lesson',
-    `<div class="form-group"><label class="form-label">Lesson Title</label><input type="text" id="nl-title" class="form-control" /></div>
-     <div class="form-group"><label class="form-label">Type</label>
-       <select id="nl-type" class="form-control" onchange="toggleVideoField()">
-         <option value="text">📄 Text</option>
-         <option value="video">🎬 Video</option>
-       </select>
-     </div>
-     <div id="nl-video-field" class="form-group hidden"><label class="form-label">YouTube Embed URL</label><input type="text" id="nl-video" class="form-control" placeholder="https://www.youtube.com/embed/..." /></div>
-     <div class="form-group"><label class="form-label">Content / Description</label><textarea id="nl-content" class="form-control" rows="5" placeholder="Lesson content (supports plain text)..."></textarea></div>`,
-    `<button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
-     <button class="btn btn-primary" onclick="addLesson('${courseId}')">Add Lesson</button>`
-  );
-}
-
-function toggleVideoField() {
-  const type = document.getElementById('nl-type').value;
-  document.getElementById('nl-video-field').classList.toggle('hidden', type !== 'video');
-}
-
-function addLesson(courseId) {
-  const title = document.getElementById('nl-title').value.trim();
-  const type = document.getElementById('nl-type').value;
-  const content = document.getElementById('nl-content').value.trim();
-  const videoUrl = type === 'video' ? document.getElementById('nl-video').value.trim() : '';
-  if (!title) { showToast('⚠️ Title is required'); return; }
-  const courses = DB.get('courses');
-  const idx = courses.findIndex(c => c.id === courseId);
-  courses[idx].lessons.push({ id: uid(), title, type, content, videoUrl });
-  DB.set('courses', courses);
-  closeModal();
-  showToast('✅ Lesson added');
-  renderCourseDetail({ courseId });
-}
-
-function openEditLessonModal(courseId, lessonId) {
-  const course = DB.get('courses').find(c => c.id === courseId);
-  const lesson = course.lessons.find(l => l.id === lessonId);
-  openModal('Edit Lesson',
-    `<div class="form-group"><label class="form-label">Lesson Title</label><input type="text" id="el-title" class="form-control" value="${lesson.title}" /></div>
-     <div class="form-group"><label class="form-label">Type</label>
-       <select id="el-type" class="form-control" onchange="toggleEditVideoField()">
-         <option value="text" ${lesson.type==='text'?'selected':''}>📄 Text</option>
-         <option value="video" ${lesson.type==='video'?'selected':''}>🎬 Video</option>
-       </select>
-     </div>
-     <div id="el-video-field" class="form-group ${lesson.type!=='video'?'hidden':''}"><label class="form-label">YouTube Embed URL</label><input type="text" id="el-video" class="form-control" value="${lesson.videoUrl||''}" /></div>
-     <div class="form-group"><label class="form-label">Content</label><textarea id="el-content" class="form-control" rows="5">${lesson.content||''}</textarea></div>`,
-    `<button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
-     <button class="btn btn-primary" onclick="saveLesson('${courseId}','${lessonId}')">Save Changes</button>`
-  );
-}
-function toggleEditVideoField() {
-  const type = document.getElementById('el-type').value;
-  document.getElementById('el-video-field').classList.toggle('hidden', type !== 'video');
-}
-function saveLesson(courseId, lessonId) {
-  const title = document.getElementById('el-title').value.trim();
-  const type = document.getElementById('el-type').value;
-  const content = document.getElementById('el-content').value.trim();
-  const videoUrl = type === 'video' ? document.getElementById('el-video').value.trim() : '';
-  const courses = DB.get('courses');
-  const cIdx = courses.findIndex(c => c.id === courseId);
-  const lIdx = courses[cIdx].lessons.findIndex(l => l.id === lessonId);
-  courses[cIdx].lessons[lIdx] = { ...courses[cIdx].lessons[lIdx], title, type, content, videoUrl };
-  DB.set('courses', courses);
-  closeModal();
-  showToast('✅ Lesson updated');
-  renderCourseDetail({ courseId });
-}
-function deleteLesson(courseId, lessonId) {
-  if (!confirm('Delete this lesson?')) return;
-  const courses = DB.get('courses');
-  const idx = courses.findIndex(c => c.id === courseId);
-  courses[idx].lessons = courses[idx].lessons.filter(l => l.id !== lessonId);
-  DB.set('courses', courses);
-  showToast('🗑️ Lesson deleted');
-  renderCourseDetail({ courseId });
-}
-
-/* ─── EXAM BUILDER ─── */
-let examDraft = null;
-
-function renderExamBuilderTab(courseId) {
-  const course = DB.get('courses').find(c => c.id === courseId);
-  examDraft = course.exam ? JSON.parse(JSON.stringify(course.exam)) : { id: uid(), title: course.title + ' Exam', questions: [] };
-
-  const renderQuestions = () => examDraft.questions.map((q, qi) => `
-    <div class="question-builder">
-      <div class="question-builder-header">
-        <strong>Q${qi + 1} — ${q.type === 'mcq' ? 'Multiple Choice' : 'Open Answer'}</strong>
-        <button class="btn btn-danger btn-sm" onclick="removeQuestion(${qi}, '${courseId}')">Remove</button>
-      </div>
-      <div class="form-group"><label class="form-label">Question Text</label>
-        <input type="text" class="form-control" value="${q.text}" onchange="updateQuestion(${qi},'text',this.value,'${courseId}')" />
-      </div>
-      ${q.type === 'mcq' ? `
-      <label class="form-label">Options (check the correct one)</label>
-      ${q.options.map((opt, oi) => `
-        <div class="option-builder">
-          <input type="radio" name="correct_${qi}" ${q.correct === oi ? 'checked' : ''} onchange="updateQuestion(${qi},'correct',${oi},'${courseId}')" />
-          <input type="text" class="form-control" value="${opt}" placeholder="Option ${oi+1}" onchange="updateOption(${qi},${oi},this.value,'${courseId}')" />
-          ${q.options.length > 2 ? `<button class="btn btn-ghost btn-sm" onclick="removeOption(${qi},${oi},'${courseId}')">✕</button>` : ''}
-        </div>
-      `).join('')}
-      ${q.options.length < 6 ? `<button class="btn btn-ghost btn-sm mt-2" onclick="addOption(${qi},'${courseId}')">+ Add Option</button>` : ''}
-      ` : `<p class="text-sm text-gray mt-1">Students will type a free-form answer. Manually reviewed.</p>`}
-    </div>
-  `).join('');
-
-  document.getElementById('course-tab-content').innerHTML = `
-    <div class="section-header">
-      <div class="section-title">Exam Builder</div>
-      <button class="btn btn-primary btn-sm" onclick="saveExam('${courseId}')">💾 Save Exam</button>
-    </div>
-    <div class="card" style="margin-bottom:20px">
-      <div class="form-group"><label class="form-label">Exam Title</label>
-        <input type="text" id="exam-title-input" class="form-control" value="${examDraft.title}" onchange="examDraft.title=this.value" />
-      </div>
-    </div>
-    <div id="questions-list">${renderQuestions()}</div>
-    <div style="display:flex;gap:10px;margin-top:8px">
-      <button class="btn btn-secondary btn-sm" onclick="addQuestion('mcq','${courseId}')">+ Multiple Choice</button>
-      <button class="btn btn-outline btn-sm" onclick="addQuestion('open','${courseId}')">+ Open Answer</button>
-    </div>`;
-}
-
-function addQuestion(type, courseId) {
-  examDraft.questions.push(type === 'mcq'
-    ? { id: uid(), type: 'mcq', text: '', options: ['', '', '', ''], correct: 0 }
-    : { id: uid(), type: 'open', text: '' });
-  renderExamBuilderTab(courseId);
-}
-function removeQuestion(qi, courseId) {
-  examDraft.questions.splice(qi, 1);
-  renderExamBuilderTab(courseId);
-}
-function updateQuestion(qi, field, val, courseId) {
-  examDraft.questions[qi][field] = val;
-}
-function updateOption(qi, oi, val) {
-  examDraft.questions[qi].options[oi] = val;
-}
-function addOption(qi, courseId) {
-  examDraft.questions[qi].options.push('');
-  renderExamBuilderTab(courseId);
-}
-function removeOption(qi, oi, courseId) {
-  examDraft.questions[qi].options.splice(oi, 1);
-  if (examDraft.questions[qi].correct >= examDraft.questions[qi].options.length) examDraft.questions[qi].correct = 0;
-  renderExamBuilderTab(courseId);
-}
-function saveExam(courseId) {
-  examDraft.title = document.getElementById('exam-title-input').value.trim() || examDraft.title;
-  // sync current text fields
-  document.querySelectorAll('#questions-list input[type=text], #questions-list textarea').forEach((el, i) => {});
-  const courses = DB.get('courses');
-  const idx = courses.findIndex(c => c.id === courseId);
-  courses[idx].exam = examDraft;
-  DB.set('courses', courses);
-  showToast('✅ Exam saved');
-}
-
-/* ═══════════════════════════════════════════════
-   PAGE: MY COURSES (Student)
-═══════════════════════════════════════════════ */
-function renderMyCourses() {
-  document.getElementById('topbar-title').textContent = 'My Courses';
-  document.getElementById('topbar-actions').innerHTML = '';
-  const enrollments = DB.get('enrollments').filter(e => e.studentId === currentUser.id);
-  const courses = DB.get('courses');
-  const results = DB.get('exam_results').filter(r => r.studentId === currentUser.id);
-
-  const enrolled = enrollments.map(e => {
-    const c = courses.find(x => x.id === e.courseId);
-    const total = c ? c.lessons.length : 0;
-    const done = e.completedLessons.length;
-    const pct = total > 0 ? Math.round((done / total) * 100) : 0;
-    const result = results.find(r => r.courseId === e.courseId);
-    return { ...e, course: c, total, done, pct, result };
-  }).filter(e => e.course);
-
-  document.getElementById('page-content').innerHTML = enrolled.length === 0
-    ? `<div class="empty-state"><span class="empty-icon">📚</span><h3>No courses yet</h3><p>Ask your teacher to enroll you in a course.</p></div>`
-    : `<div class="courses-grid">${enrolled.map(e => `
-        <div class="course-card" onclick="navigate('course-detail', {courseId:'${e.course.id}'})">
-          <div class="course-card-thumb">${e.course.icon || '📚'}</div>
-          <div class="course-card-body">
-            <div class="course-card-title">${e.course.title}</div>
-            <div class="course-card-desc">${e.course.description}</div>
-            <div style="margin-top:12px">
-              <div style="display:flex;justify-content:space-between;margin-bottom:6px">
-                <span class="text-sm text-gray">Progress</span>
-                <span class="text-sm font-bold">${e.pct}%</span>
-              </div>
-              <div class="progress-bar"><div class="progress-fill" style="width:${e.pct}%"></div></div>
-            </div>
-            <div class="course-card-meta">
-              <div class="course-meta-item"><strong>${e.done}</strong>/${e.total} lessons</div>
-              ${e.result ? `<span class="badge badge-green">Exam: ${e.result.score}%</span>` : (e.course.exam ? `<span class="badge badge-orange">Exam pending</span>` : '')}
-            </div>
-          </div>
-        </div>
-      `).join('')}</div>`;
-}
-
-/* ═══════════════════════════════════════════════
-   PAGE: LESSON VIEW (Student)
-═══════════════════════════════════════════════ */
-function renderLessonView({ courseId, lessonId }) {
-  const course = DB.get('courses').find(c => c.id === courseId);
-  if (!course) return;
-  const lessonIndex = lessonId ? course.lessons.findIndex(l => l.id === lessonId) : 0;
-  const lesson = course.lessons[lessonIndex];
-  if (!lesson) return;
-
-  document.getElementById('topbar-title').textContent = course.title;
-  document.getElementById('topbar-actions').innerHTML = `<button class="btn btn-ghost btn-sm" onclick="navigate('course-detail', {courseId:'${courseId}'})">← Back to Course</button>`;
-
-  // Mark lesson complete
-  const enrollments = DB.get('enrollments');
-  const eIdx = enrollments.findIndex(e => e.studentId === currentUser.id && e.courseId === courseId);
-  if (eIdx > -1 && !enrollments[eIdx].completedLessons.includes(lesson.id)) {
-    enrollments[eIdx].completedLessons.push(lesson.id);
-    DB.set('enrollments', enrollments);
-  }
-
-  const prev = lessonIndex > 0 ? course.lessons[lessonIndex - 1] : null;
-  const next = lessonIndex < course.lessons.length - 1 ? course.lessons[lessonIndex + 1] : null;
-  const enrollment = DB.get('enrollments').find(e => e.studentId === currentUser.id && e.courseId === courseId);
-  const allDone = course.lessons.every(l => enrollment && enrollment.completedLessons.includes(l.id));
-
-  document.getElementById('page-content').innerHTML = `
-    <div style="display:grid;grid-template-columns:1fr 280px;gap:24px;align-items:start">
-      <div>
-        <div class="lesson-viewer">
-          <div class="flex items-center gap-2 mt-0" style="margin-bottom:8px">
-            <span class="badge ${lesson.type==='video'?'badge-black':'badge-orange'}">${lesson.type==='video'?'🎬 Video':'📄 Text'}</span>
-            <span class="text-sm text-gray">Lesson ${lessonIndex+1} of ${course.lessons.length}</span>
-          </div>
-          <h2>${lesson.title}</h2>
-          ${lesson.type === 'video' ? `
-            <div class="video-embed">
-              ${lesson.videoUrl ? `<iframe src="${lesson.videoUrl}" allowfullscreen></iframe>` : `
-              <div class="video-placeholder"><span class="play-icon">▶</span><p>No video URL provided</p></div>`}
-            </div>
-            ${lesson.content ? `<div class="lesson-text-content" style="margin-top:16px">${lesson.content}</div>` : ''}
-          ` : `<div class="lesson-text-content">${formatContent(lesson.content)}</div>`}
-          <div class="lesson-nav">
-            ${prev ? `<button class="btn btn-ghost" onclick="navigate('lesson-view',{courseId:'${courseId}',lessonId:'${prev.id}'})">← ${prev.title}</button>` : '<div></div>'}
-            ${next ? `<button class="btn btn-primary" onclick="navigate('lesson-view',{courseId:'${courseId}',lessonId:'${next.id}'})">Next: ${next.title} →</button>`
-              : (course.exam && allDone ? `<button class="btn btn-primary" onclick="navigate('exam-view',{courseId:'${courseId}'})">Take Exam →</button>` : `<span class="badge badge-green">✓ Course Complete</span>`)}
-          </div>
-        </div>
-      </div>
-      <div>
-        <div class="card" style="padding:0;overflow:hidden">
-          <div style="padding:16px 18px;border-bottom:1.5px solid var(--gray-200)"><strong style="font-size:14px">Course Contents</strong></div>
-          <div class="lesson-list" style="border:none;border-radius:0">
-            ${course.lessons.map((l, i) => `
-              <div class="lesson-item ${l.id === lesson.id ? 'active' : ''}" onclick="navigate('lesson-view',{courseId:'${courseId}',lessonId:'${l.id}'})">
-                <div class="lesson-num">${enrollment && enrollment.completedLessons.includes(l.id) ? '✓' : i+1}</div>
-                <div class="lesson-item-info">
-                  <div class="lesson-item-title">${l.title}</div>
-                  <div class="lesson-item-type">${l.type==='video'?'🎬 Video':'📄 Text'}</div>
-                </div>
-              </div>
-            `).join('')}
-            ${course.exam ? `
-              <div class="lesson-item ${allDone?'':''}${!allDone?' opacity:0.5':''}" onclick="${allDone?`navigate('exam-view',{courseId:'${courseId}'})`:''}">
-                <div class="lesson-num" style="background:var(--orange);color:white">✍</div>
-                <div class="lesson-item-info">
-                  <div class="lesson-item-title">${course.exam.title}</div>
-                  <div class="lesson-item-type">${allDone?'Ready to take':'Complete all lessons first'}</div>
-                </div>
-              </div>` : ''}
-          </div>
-        </div>
-      </div>
-    </div>`;
-}
-
-function formatContent(text) {
-  if (!text) return '<p class="text-gray">No content provided.</p>';
-  return text.split('\n').map(line => {
-    if (line.startsWith('**') && line.endsWith('**')) return `<strong>${line.slice(2,-2)}</strong>`;
-    if (line.startsWith('```')) return '';
-    if (line.trim() === '') return '<br>';
-    return `<p style="margin-bottom:10px">${line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/`(.*?)`/g, '<code style="background:#f5f5f5;padding:2px 6px;border-radius:3px;font-family:monospace">$1</code>')}</p>`;
-  }).join('');
-}
-
-/* ═══════════════════════════════════════════════
-   PAGE: COURSE DETAIL (Student view)
+   PAGE: COURSE DETAIL
 ═══════════════════════════════════════════════ */
 function renderCourseDetail({ courseId }) {
   const course = DB.get('courses').find(c => c.id === courseId);
@@ -1231,17 +971,22 @@ function renderCourseDetail({ courseId }) {
       </div>`;
     document.getElementById('page-content').innerHTML = `
       <div class="tabs">
-        <div class="tab active" id="tab-lessons" onclick="switchCourseTab('lessons','${courseId}')">Lessons</div>
-        <div class="tab" id="tab-exam" onclick="switchCourseTab('exam','${courseId}')">Exam Builder</div>
+        <div class="tab active" id="tab-lessons"  onclick="switchCourseTab('lessons','${courseId}')">Lessons</div>
+        <div class="tab"        id="tab-exam"      onclick="switchCourseTab('exam','${courseId}')">Exam Builder</div>
+        <div class="tab"        id="tab-sessions"  onclick="switchCourseTab('sessions','${courseId}')">Sessions &amp; Attendance</div>
       </div>
       <div id="course-tab-content"></div>`;
     renderLessonsTab(courseId);
   } else {
+    // Student course detail view
     const enrollment = DB.get('enrollments').find(e => e.studentId === currentUser.id && e.courseId === courseId);
-    const result = DB.get('exam_results').find(r => r.studentId === currentUser.id && r.courseId === courseId);
-    const total = course.lessons.length;
-    const done = enrollment ? enrollment.completedLessons.length : 0;
-    const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+    const result     = DB.get('exam_results').find(r => r.studentId === currentUser.id && r.courseId === courseId);
+    const total      = course.lessons.length;
+    const done       = enrollment ? enrollment.completedLessons.length : 0;
+    const pct        = total > 0 ? Math.round((done / total) * 100) : 0;
+    const isOnsite   = currentUser.type === 'onsite';
+    const att        = isOnsite ? getStudentAttendance(currentUser.id, courseId) : null;
+    const threshold  = course.attendanceThreshold || 75;
 
     document.getElementById('topbar-title').textContent = course.title;
     document.getElementById('topbar-actions').innerHTML = `<button class="btn btn-ghost btn-sm" onclick="navigate('my-courses')">← My Courses</button>`;
@@ -1252,26 +997,38 @@ function renderCourseDetail({ courseId }) {
           <div class="card" style="margin-bottom:20px">
             <div class="card-title">${course.title}</div>
             <p style="color:var(--gray-600);margin-top:8px;font-size:14px">${course.description}</p>
+            ${isOnsite ? `
+            <div style="margin-top:16px;padding:16px;background:var(--gray-100);border-radius:6px">
+              <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+                <span style="font-size:13px;font-weight:600">Attendance</span>
+                <span class="att-pct ${attClass(att ? att.pct : 0)}">${att ? att.pct : 0}% · ${att ? att.attended : 0}/${att ? att.total : 0} sessions</span>
+              </div>
+              <div class="progress-bar" style="height:8px"><div class="progress-fill" style="width:${att ? att.pct : 0}%"></div></div>
+              <div style="margin-top:6px;font-size:12px;color:var(--gray-600)">Required threshold: <strong>${threshold}%</strong>
+                ${att && att.pct < threshold ? `<span class="badge badge-red" style="margin-left:6px">Below threshold</span>` : att && att.total > 0 ? `<span class="badge badge-green" style="margin-left:6px">On track ✓</span>` : ''}
+              </div>
+            </div>` : `
             <div style="margin-top:16px">
               <div style="display:flex;justify-content:space-between;margin-bottom:6px">
                 <span class="text-sm text-gray">Overall Progress</span>
                 <span class="text-sm font-bold">${pct}% (${done}/${total})</span>
               </div>
               <div class="progress-bar" style="height:8px"><div class="progress-fill" style="width:${pct}%"></div></div>
-            </div>
+            </div>`}
           </div>
           <div class="section-title" style="margin-bottom:12px">Lessons</div>
           <div class="lesson-list">
             ${course.lessons.map((l, i) => `
               <div class="lesson-item" onclick="navigate('lesson-view',{courseId:'${courseId}',lessonId:'${l.id}'})">
-                <div class="lesson-num" style="${enrollment && enrollment.completedLessons.includes(l.id) ? 'background:var(--orange);color:white' : ''}">${enrollment && enrollment.completedLessons.includes(l.id) ? '✓' : i+1}</div>
+                <div class="lesson-num" style="${enrollment && enrollment.completedLessons.includes(l.id) ? 'background:var(--orange);color:white' : ''}">
+                  ${enrollment && enrollment.completedLessons.includes(l.id) ? '✓' : i + 1}
+                </div>
                 <div class="lesson-item-info">
                   <div class="lesson-item-title">${l.title}</div>
-                  <div class="lesson-item-type">${l.type==='video'?'🎬 Video Lesson':'📄 Text Lesson'}</div>
+                  <div class="lesson-item-type">${l.type === 'video' ? '🎬 Video Lesson' : '📄 Text Lesson'}</div>
                 </div>
                 <span style="color:var(--gray-400);font-size:18px">›</span>
-              </div>
-            `).join('')}
+              </div>`).join('')}
           </div>
         </div>
         <div class="course-sidebar-card">
@@ -1279,25 +1036,22 @@ function renderCourseDetail({ courseId }) {
           <div class="course-sidebar-info">
             <h3>${course.title}</h3>
             <div style="margin-top:12px;display:flex;flex-direction:column;gap:8px">
-              <div style="display:flex;justify-content:space-between;font-size:13px">
-                <span class="text-gray">Lessons</span><strong>${total}</strong>
-              </div>
-              <div style="display:flex;justify-content:space-between;font-size:13px">
-                <span class="text-gray">Progress</span><strong>${pct}%</strong>
-              </div>
-              <div style="display:flex;justify-content:space-between;font-size:13px">
-                <span class="text-gray">Exam</span><strong>${course.exam ? 'Yes' : 'No'}</strong>
-              </div>
-              ${result ? `<div style="display:flex;justify-content:space-between;font-size:13px">
-                <span class="text-gray">Your Score</span><strong class="text-orange">${result.score}%</strong>
-              </div>` : ''}
+              <div style="display:flex;justify-content:space-between;font-size:13px"><span class="text-gray">Type</span><span class="type-pill type-${currentUser.type}">${isOnsite ? '🏫 On-site' : '💻 Online'}</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:13px"><span class="text-gray">Lessons</span><strong>${total}</strong></div>
+              ${isOnsite
+                ? `<div style="display:flex;justify-content:space-between;font-size:13px"><span class="text-gray">Attendance</span><strong class="att-pct ${attClass(att ? att.pct : 0)}">${att ? att.pct : 0}%</strong></div>
+                   <div style="display:flex;justify-content:space-between;font-size:13px"><span class="text-gray">Threshold</span><strong>${threshold}%</strong></div>`
+                : `<div style="display:flex;justify-content:space-between;font-size:13px"><span class="text-gray">Progress</span><strong>${pct}%</strong></div>`}
+              <div style="display:flex;justify-content:space-between;font-size:13px"><span class="text-gray">Exam</span><strong>${course.exam ? 'Yes' : 'No'}</strong></div>
+              ${result ? `<div style="display:flex;justify-content:space-between;font-size:13px"><span class="text-gray">Your Score</span><strong class="text-orange">${result.score}%</strong></div>` : ''}
             </div>
             <div style="margin-top:16px">
               ${course.lessons.length > 0 ? `<button class="btn btn-primary w-full" onclick="navigate('lesson-view',{courseId:'${courseId}',lessonId:'${course.lessons[0].id}'})">
                 ${done > 0 ? 'Continue Learning →' : 'Start Course →'}
               </button>` : ''}
               ${course.exam && pct === 100 && !result ? `<button class="btn btn-secondary w-full" style="margin-top:8px" onclick="navigate('exam-view',{courseId:'${courseId}'})">Take Exam →</button>` : ''}
-              ${result ? `<div class="badge badge-green w-full" style="text-align:center;padding:10px;margin-top:8px;display:block">✓ Exam Completed: ${result.score}%</div>` : ''}
+              ${result ? `<div class="badge badge-green w-full" style="text-align:center;padding:10px;margin-top:8px;display:block">✓ Exam: ${result.score}%</div>` : ''}
+              ${isOnsite ? `<button class="btn btn-outline w-full" style="margin-top:8px" onclick="navigate('check-in')">📋 Check In to Session</button>` : ''}
             </div>
           </div>
         </div>
@@ -1306,31 +1060,713 @@ function renderCourseDetail({ courseId }) {
 }
 
 function deleteCourse(courseId) {
-  if (!confirm('Delete this course? All enrollments for this course will also be removed.')) return;
-  DB.set('courses', DB.get('courses').filter(c => c.id !== courseId));
-  DB.set('enrollments', DB.get('enrollments').filter(e => e.courseId !== courseId));
+  if (!confirm('Delete this course and all its sessions?')) return;
+  DB.set('courses',      DB.get('courses').filter(c => c.id !== courseId));
+  DB.set('enrollments',  DB.get('enrollments').filter(e => e.courseId !== courseId));
   DB.set('exam_results', DB.get('exam_results').filter(r => r.courseId !== courseId));
-  showToast('🗑️ Course deleted');
-  navigate('courses');
+  DB.set('sessions',     DB.get('sessions').filter(s => s.courseId !== courseId));
+  showToast('🗑️ Course deleted'); navigate('courses');
+}
+
+function switchCourseTab(tab, courseId) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  if      (tab === 'lessons')  renderLessonsTab(courseId);
+  else if (tab === 'exam')     renderExamBuilderTab(courseId);
+  else if (tab === 'sessions') renderSessionsTab(courseId);
+}
+
+/* ─── LESSONS TAB ─── */
+function renderLessonsTab(courseId) {
+  const course = DB.get('courses').find(c => c.id === courseId);
+  document.getElementById('course-tab-content').innerHTML = `
+    <div class="section-header">
+      <div class="section-title">Lessons (${course.lessons.length})</div>
+      <button class="btn btn-primary btn-sm" onclick="openAddLessonModal('${courseId}')">+ Add Lesson</button>
+    </div>
+    ${course.lessons.length === 0 ? `<div class="empty-state"><span class="empty-icon">📝</span><h3>No lessons yet</h3><p>Add your first lesson.</p></div>` : `
+    <div class="lesson-list">${course.lessons.map((l, i) => `
+      <div class="lesson-item">
+        <div class="lesson-num">${i + 1}</div>
+        <div class="lesson-item-info">
+          <div class="lesson-item-title">${l.title}</div>
+          <div class="lesson-item-type">${l.type === 'video' ? '🎬 Video' : '📄 Text'}</div>
+        </div>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-ghost btn-sm" onclick="openEditLessonModal('${courseId}','${l.id}')">Edit</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteLesson('${courseId}','${l.id}')">Del</button>
+        </div>
+      </div>`).join('')}
+    </div>`}`;
+}
+
+function openAddLessonModal(courseId) {
+  openModal('Add Lesson',
+    `<div class="form-group"><label class="form-label">Lesson Title</label><input type="text" id="nl-title" class="form-control" /></div>
+     <div class="form-group"><label class="form-label">Type</label>
+       <select id="nl-type" class="form-control" onchange="toggleVideoField()">
+         <option value="text">📄 Text</option><option value="video">🎬 Video</option>
+       </select></div>
+     <div id="nl-video-field" class="form-group hidden"><label class="form-label">YouTube Embed URL</label><input type="text" id="nl-video" class="form-control" placeholder="https://www.youtube.com/embed/..." /></div>
+     <div class="form-group"><label class="form-label">Content</label><textarea id="nl-content" class="form-control" rows="5" placeholder="Lesson content..."></textarea></div>`,
+    `<button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+     <button class="btn btn-primary" onclick="addLesson('${courseId}')">Add Lesson</button>`
+  );
+}
+function toggleVideoField() {
+  document.getElementById('nl-video-field').classList.toggle('hidden', document.getElementById('nl-type').value !== 'video');
+}
+function addLesson(courseId) {
+  const title    = document.getElementById('nl-title').value.trim();
+  const type     = document.getElementById('nl-type').value;
+  const content  = document.getElementById('nl-content').value.trim();
+  const videoUrl = type === 'video' ? document.getElementById('nl-video').value.trim() : '';
+  if (!title) { showToast('⚠️ Title is required'); return; }
+  const courses = DB.get('courses');
+  const idx     = courses.findIndex(c => c.id === courseId);
+  courses[idx].lessons.push({ id: uid(), title, type, content, videoUrl });
+  DB.set('courses', courses);
+  closeModal(); showToast('✅ Lesson added'); renderCourseDetail({ courseId });
+}
+function openEditLessonModal(courseId, lessonId) {
+  const course = DB.get('courses').find(c => c.id === courseId);
+  const lesson = course.lessons.find(l => l.id === lessonId);
+  openModal('Edit Lesson',
+    `<div class="form-group"><label class="form-label">Title</label><input type="text" id="el-title" class="form-control" value="${lesson.title}" /></div>
+     <div class="form-group"><label class="form-label">Type</label>
+       <select id="el-type" class="form-control" onchange="toggleEditVideoField()">
+         <option value="text" ${lesson.type==='text'?'selected':''}>📄 Text</option>
+         <option value="video" ${lesson.type==='video'?'selected':''}>🎬 Video</option>
+       </select></div>
+     <div id="el-video-field" class="form-group ${lesson.type!=='video'?'hidden':''}"><label class="form-label">YouTube Embed URL</label><input type="text" id="el-video" class="form-control" value="${lesson.videoUrl||''}" /></div>
+     <div class="form-group"><label class="form-label">Content</label><textarea id="el-content" class="form-control" rows="5">${lesson.content||''}</textarea></div>`,
+    `<button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+     <button class="btn btn-primary" onclick="saveLesson('${courseId}','${lessonId}')">Save</button>`
+  );
+}
+function toggleEditVideoField() {
+  document.getElementById('el-video-field').classList.toggle('hidden', document.getElementById('el-type').value !== 'video');
+}
+function saveLesson(courseId, lessonId) {
+  const title    = document.getElementById('el-title').value.trim();
+  const type     = document.getElementById('el-type').value;
+  const content  = document.getElementById('el-content').value.trim();
+  const videoUrl = type === 'video' ? document.getElementById('el-video').value.trim() : '';
+  const courses  = DB.get('courses');
+  const cIdx     = courses.findIndex(c => c.id === courseId);
+  const lIdx     = courses[cIdx].lessons.findIndex(l => l.id === lessonId);
+  courses[cIdx].lessons[lIdx] = { ...courses[cIdx].lessons[lIdx], title, type, content, videoUrl };
+  DB.set('courses', courses);
+  closeModal(); showToast('✅ Lesson updated'); renderCourseDetail({ courseId });
+}
+function deleteLesson(courseId, lessonId) {
+  if (!confirm('Delete this lesson?')) return;
+  const courses = DB.get('courses');
+  const idx     = courses.findIndex(c => c.id === courseId);
+  courses[idx].lessons = courses[idx].lessons.filter(l => l.id !== lessonId);
+  DB.set('courses', courses);
+  showToast('🗑️ Lesson deleted'); renderCourseDetail({ courseId });
+}
+
+/* ─── EXAM BUILDER TAB ─── */
+let examDraft = null;
+
+function renderExamBuilderTab(courseId) {
+  const course = DB.get('courses').find(c => c.id === courseId);
+  examDraft = course.exam ? JSON.parse(JSON.stringify(course.exam)) : { id: uid(), title: course.title + ' Exam', questions: [] };
+
+  const qs = examDraft.questions.map((q, qi) => `
+    <div class="question-builder">
+      <div class="question-builder-header">
+        <strong>Q${qi + 1} — ${q.type === 'mcq' ? 'Multiple Choice' : 'Open Answer'}</strong>
+        <button class="btn btn-danger btn-sm" onclick="removeQuestion(${qi},'${courseId}')">Remove</button>
+      </div>
+      <div class="form-group"><label class="form-label">Question Text</label>
+        <input type="text" class="form-control" value="${q.text}" onchange="updateQuestion(${qi},'text',this.value)" />
+      </div>
+      ${q.type === 'mcq' ? `
+      <label class="form-label">Options (pick the correct one)</label>
+      ${q.options.map((opt, oi) => `
+        <div class="option-builder">
+          <input type="radio" name="correct_${qi}" ${q.correct === oi ? 'checked' : ''} onchange="updateQuestion(${qi},'correct',${oi})" />
+          <input type="text" class="form-control" value="${opt}" placeholder="Option ${oi+1}" onchange="updateOption(${qi},${oi},this.value)" />
+          ${q.options.length > 2 ? `<button class="btn btn-ghost btn-sm" onclick="removeOption(${qi},${oi},'${courseId}')">✕</button>` : ''}
+        </div>`).join('')}
+      ${q.options.length < 6 ? `<button class="btn btn-ghost btn-sm mt-2" onclick="addOption(${qi},'${courseId}')">+ Add Option</button>` : ''}
+      ` : `<p class="text-sm text-gray mt-1">Students type a free-form answer — reviewed manually.</p>`}
+    </div>`).join('');
+
+  document.getElementById('course-tab-content').innerHTML = `
+    <div class="section-header">
+      <div class="section-title">Exam Builder</div>
+      <button class="btn btn-primary btn-sm" onclick="saveExam('${courseId}')">💾 Save Exam</button>
+    </div>
+    <div class="card" style="margin-bottom:20px">
+      <div class="form-group"><label class="form-label">Exam Title</label>
+        <input type="text" id="exam-title-input" class="form-control" value="${examDraft.title}" onchange="examDraft.title=this.value" />
+      </div>
+    </div>
+    <div id="questions-list">${qs}</div>
+    <div style="display:flex;gap:10px;margin-top:8px">
+      <button class="btn btn-secondary btn-sm" onclick="addQuestion('mcq','${courseId}')">+ Multiple Choice</button>
+      <button class="btn btn-outline btn-sm"   onclick="addQuestion('open','${courseId}')">+ Open Answer</button>
+    </div>`;
+}
+function addQuestion(type, courseId)          { examDraft.questions.push(type === 'mcq' ? { id: uid(), type: 'mcq', text: '', options: ['','','',''], correct: 0 } : { id: uid(), type: 'open', text: '' }); renderExamBuilderTab(courseId); }
+function removeQuestion(qi, courseId)          { examDraft.questions.splice(qi, 1); renderExamBuilderTab(courseId); }
+function updateQuestion(qi, field, val)        { examDraft.questions[qi][field] = val; }
+function updateOption(qi, oi, val)             { examDraft.questions[qi].options[oi] = val; }
+function addOption(qi, courseId)               { examDraft.questions[qi].options.push(''); renderExamBuilderTab(courseId); }
+function removeOption(qi, oi, courseId)        { examDraft.questions[qi].options.splice(oi, 1); if (examDraft.questions[qi].correct >= examDraft.questions[qi].options.length) examDraft.questions[qi].correct = 0; renderExamBuilderTab(courseId); }
+function saveExam(courseId) {
+  examDraft.title = document.getElementById('exam-title-input').value.trim() || examDraft.title;
+  const courses   = DB.get('courses');
+  const idx       = courses.findIndex(c => c.id === courseId);
+  courses[idx].exam = examDraft;
+  DB.set('courses', courses);
+  showToast('✅ Exam saved');
+}
+
+/* ═══════════════════════════════════════════════
+   SESSIONS TAB (Admin — per course attendance)
+═══════════════════════════════════════════════ */
+function renderSessionsTab(courseId) {
+  const course    = DB.get('courses').find(c => c.id === courseId);
+  const sessions  = DB.get('sessions').filter(s => s.courseId === courseId).sort((a,b) => b.date - a.date);
+  const students  = DB.get('users').filter(u => u.role === 'student' && u.type === 'onsite');
+  const enrolled  = DB.get('enrollments').filter(e => e.courseId === courseId && students.find(s => s.id === e.studentId)).map(e => students.find(s => s.id === e.studentId)).filter(Boolean);
+
+  document.getElementById('course-tab-content').innerHTML = `
+    <div class="section-header">
+      <div class="section-title">Sessions (${sessions.length})</div>
+      <button class="btn btn-primary btn-sm" onclick="openCreateSessionModal('${courseId}')">+ New Session</button>
+    </div>
+
+    ${enrolled.length > 0 ? `
+    <div class="card" style="margin-bottom:24px">
+      <div style="font-weight:700;font-size:13px;letter-spacing:.5px;text-transform:uppercase;color:var(--gray-600);margin-bottom:14px">On-site Student Summary</div>
+      <table>
+        <thead><tr><th>Student</th><th>Attended</th><th>Total Sessions</th><th>Rate</th><th>Status</th></tr></thead>
+        <tbody>
+          ${enrolled.map(s => {
+            const att = getStudentAttendance(s.id, courseId);
+            const threshold = course.attendanceThreshold || 75;
+            return `<tr>
+              <td><strong>${s.name}</strong></td>
+              <td>${att.attended}</td>
+              <td>${att.total}</td>
+              <td><span class="att-pct ${attClass(att.pct)}">${att.pct}%</span></td>
+              <td>${att.pct >= threshold ? `<span class="badge badge-green">On track ✓</span>` : att.total === 0 ? `<span class="badge badge-gray">No data</span>` : `<span class="badge badge-red">Below ${threshold}%</span>`}</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>` : `<div class="card" style="margin-bottom:24px"><p class="text-gray text-sm">No on-site students enrolled in this course yet.</p></div>`}
+
+    <div style="font-family:var(--font-display);font-size:20px;letter-spacing:.5px;margin-bottom:14px">Session Log</div>
+    ${sessions.length === 0 ? `<div class="empty-state"><span class="empty-icon">📋</span><h3>No sessions yet</h3><p>Create a session to start tracking attendance.</p></div>` :
+      sessions.map(s => {
+        const attCount = s.attendees.length;
+        const total    = enrolled.length;
+        const pct      = total > 0 ? Math.round((attCount / total) * 100) : 0;
+        return `<div class="session-item">
+          <div class="session-date">${new Date(s.date).toLocaleDateString('en-GB',{day:'2-digit',month:'short'})}</div>
+          <div class="session-info">
+            <div class="session-label">${s.label}</div>
+            <div class="session-sub">${formatDate(s.date)} · ${attCount}/${total} attended (${pct}%)</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px">
+            <div>
+              <div style="font-size:10px;color:var(--gray-400);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Code</div>
+              <span class="session-code">${s.code}</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <button class="btn btn-ghost btn-sm" onclick="openSessionDetailModal('${s.id}','${courseId}')">View Roster</button>
+              <button class="btn btn-danger btn-sm" onclick="deleteSession('${s.id}','${courseId}')">Delete</button>
+            </div>
+          </div>
+        </div>`;
+      }).join('')}`;
+}
+
+function openCreateSessionModal(courseId) {
+  const today = new Date().toISOString().split('T')[0];
+  openModal('Create Attendance Session',
+    `<div class="form-group"><label class="form-label">Session Label</label><input type="text" id="ns-label" class="form-control" placeholder="e.g. Week 3 — Monday" /></div>
+     <div class="form-group"><label class="form-label">Date</label><input type="date" id="ns-date" class="form-control" value="${today}" /></div>
+     <div style="background:var(--gray-100);border-radius:6px;padding:14px;margin-top:4px">
+       <div style="font-size:12px;color:var(--gray-600)">A unique 6-character code will be generated for this session. Share it with on-site students so they can check in.</div>
+     </div>`,
+    `<button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+     <button class="btn btn-primary" onclick="createSession('${courseId}')">Create &amp; Generate Code</button>`
+  );
+}
+
+function createSession(courseId) {
+  const label = document.getElementById('ns-label').value.trim();
+  const date  = document.getElementById('ns-date').value;
+  if (!label) { showToast('⚠️ Session label is required'); return; }
+  const code  = genCode();
+  const sessions = DB.get('sessions');
+  const newSession = { id: uid(), courseId, label, date: new Date(date).getTime(), code, attendees: [] };
+  sessions.push(newSession);
+  DB.set('sessions', sessions);
+  closeModal();
+  // Show the code immediately so teacher can share it
+  openModal('Session Created — Share this Code',
+    `<div class="attendance-code-box">
+       <div class="attendance-code-label">Today's Attendance Code</div>
+       <div class="attendance-code-val">${code}</div>
+       <div class="attendance-code-sub">${label} · ${formatDate(newSession.date)}</div>
+     </div>
+     <p class="text-gray text-sm mt-3" style="text-align:center">Students enter this code in their Check-In page to mark attendance.</p>`,
+    `<button class="btn btn-primary w-full" onclick="closeModal();switchCourseTab('sessions','${courseId}')">Done</button>`
+  );
+  showToast('✅ Session created');
+}
+
+function openSessionDetailModal(sessionId, courseId) {
+  const session  = DB.get('sessions').find(s => s.id === sessionId);
+  const students = DB.get('users').filter(u => u.role === 'student' && u.type === 'onsite');
+  const enrolled = DB.get('enrollments').filter(e => e.courseId === courseId && students.find(s => s.id === e.studentId)).map(e => students.find(s => s.id === e.studentId)).filter(Boolean);
+
+  const rows = enrolled.map(s => {
+    const present = session.attendees.includes(s.id);
+    return `<tr>
+      <td><strong>${s.name}</strong></td>
+      <td class="text-gray">${s.email}</td>
+      <td>${present
+        ? `<span class="badge badge-green">✓ Present</span>`
+        : `<span class="badge badge-gray">Absent</span>`}</td>
+      <td><button class="btn btn-ghost btn-sm" onclick="toggleManualAttendance('${sessionId}','${s.id}','${courseId}')">${present ? 'Mark Absent' : 'Mark Present'}</button></td>
+    </tr>`;
+  }).join('');
+
+  openModal(`Attendance Roster — ${session.label}`,
+    `<div style="margin-bottom:14px;display:flex;align-items:center;gap:12px">
+       <span class="session-code">${session.code}</span>
+       <span class="text-gray text-sm">${formatDate(session.date)} · ${session.attendees.length}/${enrolled.length} present</span>
+     </div>
+     ${enrolled.length === 0 ? `<p class="text-gray text-sm">No on-site students enrolled.</p>` :
+       `<table><thead><tr><th>Name</th><th>Email</th><th>Status</th><th>Override</th></tr></thead><tbody>${rows}</tbody></table>`}`,
+    `<button class="btn btn-primary" onclick="closeModal();renderSessionsTab('${courseId}')">Close</button>`
+  );
+}
+
+function toggleManualAttendance(sessionId, studentId, courseId) {
+  const sessions = DB.get('sessions');
+  const sIdx     = sessions.findIndex(s => s.id === sessionId);
+  const already  = sessions[sIdx].attendees.includes(studentId);
+  if (already) sessions[sIdx].attendees = sessions[sIdx].attendees.filter(a => a !== studentId);
+  else sessions[sIdx].attendees.push(studentId);
+  DB.set('sessions', sessions);
+  showToast(already ? '🔴 Marked absent' : '✅ Marked present');
+  openSessionDetailModal(sessionId, courseId); // refresh modal
+}
+
+function deleteSession(sessionId, courseId) {
+  if (!confirm('Delete this session? Attendance records for it will be lost.')) return;
+  DB.set('sessions', DB.get('sessions').filter(s => s.id !== sessionId));
+  showToast('🗑️ Session deleted');
+  renderSessionsTab(courseId);
+}
+
+/* ═══════════════════════════════════════════════
+   PAGE: CHECK-IN (Onsite Student)
+   Student enters a 6-char code to mark themselves present
+═══════════════════════════════════════════════ */
+function renderCheckIn() {
+  document.getElementById('topbar-title').textContent = 'Check In';
+  document.getElementById('topbar-actions').innerHTML = '';
+
+  document.getElementById('page-content').innerHTML = `
+    <div class="code-entry-wrap">
+      <div class="card" style="text-align:center;margin-bottom:20px">
+        <div style="font-size:36px;margin-bottom:8px">📋</div>
+        <div style="font-family:var(--font-display);font-size:28px;letter-spacing:.5px">Enter Session Code</div>
+        <p class="text-gray" style="margin-top:8px;font-size:14px">Ask your teacher for the code and enter it below to mark your attendance.</p>
+      </div>
+      <div class="card">
+        <div class="form-group">
+          <label class="form-label">6-Character Code</label>
+          <input type="text" id="checkin-code" class="code-input" maxlength="6" placeholder="XXXXXX"
+            oninput="this.value=this.value.toUpperCase()"
+            onkeydown="if(event.key==='Enter') submitCheckIn()" />
+        </div>
+        <button class="btn btn-primary w-full btn-lg" onclick="submitCheckIn()">Mark Me Present →</button>
+      </div>
+      <div id="checkin-result" style="margin-top:16px"></div>
+    </div>`;
+}
+
+function submitCheckIn() {
+  const raw    = document.getElementById('checkin-code').value.trim().toUpperCase();
+  const result = document.getElementById('checkin-result');
+
+  if (raw.length < 6) { showToast('⚠️ Please enter a 6-character code'); return; }
+
+  const sessions = DB.get('sessions');
+  const sIdx     = sessions.findIndex(s => s.code === raw);
+
+  if (sIdx === -1) {
+    result.innerHTML = `<div class="card" style="border-color:#e53e3e;background:#fff5f5;text-align:center">
+      <div style="font-size:32px">❌</div>
+      <div style="font-weight:700;margin-top:8px">Invalid Code</div>
+      <p class="text-gray text-sm mt-2">Double-check the code with your teacher.</p>
+    </div>`;
+    return;
+  }
+
+  const session = sessions[sIdx];
+
+  // Check student is enrolled in this course
+  const enrollment = DB.get('enrollments').find(e => e.studentId === currentUser.id && e.courseId === session.courseId);
+  if (!enrollment) {
+    result.innerHTML = `<div class="card" style="border-color:#e53e3e;background:#fff5f5;text-align:center">
+      <div style="font-size:32px">⛔</div>
+      <div style="font-weight:700;margin-top:8px">Not Enrolled</div>
+      <p class="text-gray text-sm mt-2">You are not enrolled in the course this session belongs to.</p>
+    </div>`;
+    return;
+  }
+
+  if (session.attendees.includes(currentUser.id)) {
+    const course = DB.get('courses').find(c => c.id === session.courseId);
+    result.innerHTML = `<div class="card" style="border-color:var(--orange);background:var(--orange-light);text-align:center">
+      <div style="font-size:32px">ℹ️</div>
+      <div style="font-weight:700;margin-top:8px">Already Checked In</div>
+      <p class="text-gray text-sm mt-2">You already marked attendance for <strong>${session.label}</strong> in ${course ? course.title : 'this course'}.</p>
+    </div>`;
+    return;
+  }
+
+  // Mark present
+  sessions[sIdx].attendees.push(currentUser.id);
+  DB.set('sessions', sessions);
+
+  const course = DB.get('courses').find(c => c.id === session.courseId);
+  const att    = getStudentAttendance(currentUser.id, session.courseId);
+
+  document.getElementById('checkin-code').value = '';
+  result.innerHTML = `<div class="card" style="border-color:#25a244;background:#e6f7ee;text-align:center">
+    <div style="font-size:40px">✅</div>
+    <div style="font-family:var(--font-display);font-size:28px;letter-spacing:.5px;margin-top:8px">Attendance Marked!</div>
+    <p style="color:var(--gray-600);font-size:14px;margin-top:6px"><strong>${session.label}</strong> · ${course ? course.title : ''}</p>
+    <p style="color:var(--gray-600);font-size:14px">${formatDate(session.date)}</p>
+    <div style="margin-top:16px;padding-top:16px;border-top:1px solid #b7e4c7">
+      <div style="font-size:12px;color:var(--gray-600);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Your Attendance Rate</div>
+      <div style="font-family:var(--font-display);font-size:40px;color:#25a244">${att.pct}%</div>
+      <div style="font-size:13px;color:var(--gray-600)">${att.attended} of ${att.total} sessions attended</div>
+    </div>
+    <button class="btn btn-secondary" style="margin-top:16px" onclick="navigate('attendance')">View My Attendance →</button>
+  </div>`;
+  showToast('✅ Attendance recorded!');
+}
+
+/* ═══════════════════════════════════════════════
+   PAGE: ATTENDANCE
+   Admin → global view of all sessions + students
+   Student (onsite) → personal attendance across courses
+═══════════════════════════════════════════════ */
+function renderAttendancePage() {
+  document.getElementById('topbar-title').textContent = 'Attendance';
+  document.getElementById('topbar-actions').innerHTML = '';
+
+  const courses = DB.get('courses');
+
+  if (currentUser.role === 'admin') {
+    const sessions  = DB.get('sessions').sort((a,b) => b.date - a.date);
+    const students  = DB.get('users').filter(u => u.role === 'student' && u.type === 'onsite');
+    const totalSess = sessions.length;
+    const totalPres = sessions.reduce((s, sess) => s + sess.attendees.length, 0);
+
+    document.getElementById('page-content').innerHTML = `
+      <div class="stats-grid">
+        <div class="stat-card accent">
+          <div class="stat-label">Total Sessions</div>
+          <div class="stat-value">${totalSess}</div>
+          <div class="stat-sub">Across all courses</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">On-site Students</div>
+          <div class="stat-value">${students.length}</div>
+          <div class="stat-sub">Attendance tracked</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Total Check-ins</div>
+          <div class="stat-value">${totalPres}</div>
+          <div class="stat-sub">All sessions combined</div>
+        </div>
+      </div>
+
+      ${courses.map(course => {
+        const cSessions = sessions.filter(s => s.courseId === course.id);
+        const enrolled  = DB.get('enrollments').filter(e => e.courseId === course.id && students.find(s => s.id === e.studentId)).map(e => students.find(s => s.id === e.studentId)).filter(Boolean);
+        if (cSessions.length === 0 && enrolled.length === 0) return '';
+        const threshold = course.attendanceThreshold || 75;
+
+        return `<div class="card" style="margin-bottom:24px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+            <div>
+              <div class="card-title">${course.title}</div>
+              <div class="text-gray text-sm">Attendance threshold: ${threshold}% · ${cSessions.length} sessions</div>
+            </div>
+            <button class="btn btn-ghost btn-sm" onclick="navigate('course-detail',{courseId:'${course.id}'})">Manage →</button>
+          </div>
+          ${enrolled.length === 0 ? `<p class="text-gray text-sm">No on-site students enrolled.</p>` : `
+          <table>
+            <thead><tr><th>Student</th><th>Attended</th><th>Sessions</th><th>Rate</th><th>Status</th></tr></thead>
+            <tbody>${enrolled.map(s => {
+              const att = getStudentAttendance(s.id, course.id);
+              return `<tr>
+                <td><strong>${s.name}</strong><br><span class="text-gray text-sm">${s.email}</span></td>
+                <td>${att.attended}</td>
+                <td>${att.total}</td>
+                <td><div style="display:flex;align-items:center;gap:8px">
+                  <div class="progress-bar" style="width:80px"><div class="progress-fill" style="width:${att.pct}%"></div></div>
+                  <span class="att-pct ${attClass(att.pct)}">${att.pct}%</span>
+                </div></td>
+                <td>${att.pct >= threshold ? `<span class="badge badge-green">✓ On track</span>` : att.total === 0 ? `<span class="badge badge-gray">No data</span>` : `<span class="badge badge-red">⚠ Below threshold</span>`}</td>
+              </tr>`;
+            }).join('')}</tbody>
+          </table>`}
+        </div>`;
+      }).join('')}
+
+      <div class="card">
+        <div class="card-title" style="margin-bottom:14px">All Sessions Log</div>
+        ${sessions.length === 0 ? `<p class="text-gray text-sm">No sessions created yet. Go into a course → Sessions tab to create one.</p>` : `
+        <table>
+          <thead><tr><th>Date</th><th>Course</th><th>Label</th><th>Code</th><th>Attended</th></tr></thead>
+          <tbody>${sessions.map(s => {
+            const course = courses.find(c => c.id === s.courseId);
+            const enrolled = DB.get('enrollments').filter(e => e.courseId === s.courseId && DB.get('users').find(u => u.id === e.studentId && u.type === 'onsite')).length;
+            return `<tr>
+              <td>${formatDate(s.date)}</td>
+              <td>${course ? course.title : '—'}</td>
+              <td>${s.label}</td>
+              <td><span class="session-code" style="font-size:13px">${s.code}</span></td>
+              <td>${s.attendees.length} / ${enrolled}</td>
+            </tr>`;
+          }).join('')}</tbody>
+        </table>`}
+      </div>`;
+
+  } else {
+    // Onsite student personal attendance view
+    const enrollments = DB.get('enrollments').filter(e => e.studentId === currentUser.id);
+    const allSessions = DB.get('sessions');
+
+    document.getElementById('page-content').innerHTML = `
+      <div class="section-header">
+        <div class="section-title">My Attendance</div>
+        <button class="btn btn-primary btn-sm" onclick="navigate('check-in')">📋 Check In →</button>
+      </div>
+      ${enrollments.length === 0 ? `<div class="empty-state"><span class="empty-icon">📋</span><h3>Not enrolled yet</h3><p>Ask your teacher to enroll you in a course.</p></div>` :
+        enrollments.map(e => {
+          const course    = courses.find(c => c.id === e.courseId);
+          if (!course) return '';
+          const cSessions = allSessions.filter(s => s.courseId === e.courseId).sort((a,b) => b.date - a.date);
+          const att       = getStudentAttendance(currentUser.id, e.courseId);
+          const threshold = course.attendanceThreshold || 75;
+
+          return `<div class="card" style="margin-bottom:20px">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px">
+              <div>
+                <div class="card-title">${course.title}</div>
+                <div class="text-gray text-sm">Required: ${threshold}% attendance</div>
+              </div>
+              <div style="text-align:right">
+                <div class="att-pct ${attClass(att.pct)}" style="font-size:32px;font-family:var(--font-display)">${att.pct}%</div>
+                <div class="text-gray text-sm">${att.attended}/${att.total} sessions</div>
+              </div>
+            </div>
+            <div class="progress-bar" style="height:10px;margin-bottom:6px"><div class="progress-fill" style="width:${att.pct}%"></div></div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--gray-600);margin-bottom:16px">
+              <span>0%</span>
+              <span style="color:var(--orange)">Threshold: ${threshold}%</span>
+              <span>100%</span>
+            </div>
+            ${att.pct < threshold && att.total > 0 ? `
+            <div style="background:#fff5f5;border:1.5px solid #e53e3e;border-radius:6px;padding:12px;margin-bottom:14px;font-size:13px;color:#e53e3e">
+              ⚠️ Your attendance is below the required threshold. You need to attend more sessions to qualify for completion.
+            </div>` : att.pct >= threshold && att.total > 0 ? `
+            <div style="background:#e6f7ee;border:1.5px solid #25a244;border-radius:6px;padding:12px;margin-bottom:14px;font-size:13px;color:#25a244">
+              ✓ Great — you're meeting the attendance requirement!
+            </div>` : ''}
+            ${cSessions.length === 0 ? `<p class="text-gray text-sm">No sessions scheduled yet.</p>` : `
+            <table>
+              <thead><tr><th>Date</th><th>Session</th><th>Status</th></tr></thead>
+              <tbody>${cSessions.map(s => {
+                const present = s.attendees.includes(currentUser.id);
+                return `<tr>
+                  <td>${formatDate(s.date)}</td>
+                  <td>${s.label}</td>
+                  <td>${present ? `<span class="badge badge-green">✓ Present</span>` : `<span class="badge badge-gray">Absent</span>`}</td>
+                </tr>`;
+              }).join('')}</tbody>
+            </table>`}
+          </div>`;
+        }).join('')}`;
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   PAGE: MY COURSES (Student)
+═══════════════════════════════════════════════ */
+function renderMyCourses() {
+  document.getElementById('topbar-title').textContent = 'My Courses';
+  document.getElementById('topbar-actions').innerHTML = '';
+  const enrollments = DB.get('enrollments').filter(e => e.studentId === currentUser.id);
+  const courses     = DB.get('courses');
+  const results     = DB.get('exam_results').filter(r => r.studentId === currentUser.id);
+  const isOnsite    = currentUser.type === 'onsite';
+
+  const enrolled = enrollments.map(e => {
+    const c      = courses.find(x => x.id === e.courseId);
+    const total  = c ? c.lessons.length : 0;
+    const done   = e.completedLessons.length;
+    const pct    = total > 0 ? Math.round((done / total) * 100) : 0;
+    const result = results.find(r => r.courseId === e.courseId);
+    const att    = isOnsite ? getStudentAttendance(currentUser.id, e.courseId) : null;
+    return { ...e, course: c, total, done, pct, result, att };
+  }).filter(e => e.course);
+
+  document.getElementById('page-content').innerHTML = enrolled.length === 0
+    ? `<div class="empty-state"><span class="empty-icon">📚</span><h3>No courses yet</h3><p>Ask your teacher to enroll you in a course.</p></div>`
+    : `<div class="courses-grid">${enrolled.map(e => `
+        <div class="course-card" onclick="navigate('course-detail',{courseId:'${e.course.id}'})">
+          <div class="course-card-thumb">${e.course.icon || '📚'}</div>
+          <div class="course-card-body">
+            <div class="course-card-title">${e.course.title}</div>
+            <div class="course-card-desc">${e.course.description}</div>
+            ${isOnsite ? `
+            <div style="margin-top:12px">
+              <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+                <span class="text-sm text-gray">Attendance</span>
+                <span class="att-pct ${attClass(e.att ? e.att.pct : 0)} text-sm">${e.att ? e.att.pct : 0}%</span>
+              </div>
+              <div class="progress-bar"><div class="progress-fill" style="width:${e.att ? e.att.pct : 0}%"></div></div>
+            </div>` : `
+            <div style="margin-top:12px">
+              <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+                <span class="text-sm text-gray">Progress</span>
+                <span class="text-sm font-bold">${e.pct}%</span>
+              </div>
+              <div class="progress-bar"><div class="progress-fill" style="width:${e.pct}%"></div></div>
+            </div>`}
+            <div class="course-card-meta">
+              <div class="course-meta-item">${isOnsite ? `<strong>${e.att ? e.att.attended : 0}</strong>/${e.att ? e.att.total : 0} sessions` : `<strong>${e.done}</strong>/${e.total} lessons`}</div>
+              ${e.result ? `<span class="badge badge-green">Exam: ${e.result.score}%</span>` : (e.course.exam ? `<span class="badge badge-orange">Exam pending</span>` : '')}
+            </div>
+          </div>
+        </div>`).join('')}</div>`;
+}
+
+/* ═══════════════════════════════════════════════
+   PAGE: LESSON VIEW (Student)
+═══════════════════════════════════════════════ */
+function renderLessonView({ courseId, lessonId }) {
+  const course      = DB.get('courses').find(c => c.id === courseId);
+  if (!course) return;
+  const lessonIndex = lessonId ? course.lessons.findIndex(l => l.id === lessonId) : 0;
+  const lesson      = course.lessons[lessonIndex];
+  if (!lesson) return;
+
+  document.getElementById('topbar-title').textContent = course.title;
+  document.getElementById('topbar-actions').innerHTML = `<button class="btn btn-ghost btn-sm" onclick="navigate('course-detail',{courseId:'${courseId}'})">← Back to Course</button>`;
+
+  const enrollments = DB.get('enrollments');
+  const eIdx        = enrollments.findIndex(e => e.studentId === currentUser.id && e.courseId === courseId);
+  if (eIdx > -1 && !enrollments[eIdx].completedLessons.includes(lesson.id)) {
+    enrollments[eIdx].completedLessons.push(lesson.id);
+    DB.set('enrollments', enrollments);
+  }
+
+  const prev       = lessonIndex > 0 ? course.lessons[lessonIndex - 1] : null;
+  const next       = lessonIndex < course.lessons.length - 1 ? course.lessons[lessonIndex + 1] : null;
+  const enrollment = DB.get('enrollments').find(e => e.studentId === currentUser.id && e.courseId === courseId);
+  const allDone    = course.lessons.every(l => enrollment && enrollment.completedLessons.includes(l.id));
+
+  document.getElementById('page-content').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 280px;gap:24px;align-items:start">
+      <div>
+        <div class="lesson-viewer">
+          <div class="flex items-center gap-2 mt-0" style="margin-bottom:8px">
+            <span class="badge ${lesson.type==='video'?'badge-black':'badge-orange'}">${lesson.type==='video'?'🎬 Video':'📄 Text'}</span>
+            <span class="text-sm text-gray">Lesson ${lessonIndex+1} of ${course.lessons.length}</span>
+          </div>
+          <h2>${lesson.title}</h2>
+          ${lesson.type === 'video' ? `
+            <div class="video-embed">
+              ${lesson.videoUrl ? `<iframe src="${lesson.videoUrl}" allowfullscreen></iframe>` : `<div class="video-placeholder"><span class="play-icon">▶</span><p>No video URL</p></div>`}
+            </div>
+            ${lesson.content ? `<div class="lesson-text-content" style="margin-top:16px">${lesson.content}</div>` : ''}
+          ` : `<div class="lesson-text-content">${formatContent(lesson.content)}</div>`}
+          <div class="lesson-nav">
+            ${prev ? `<button class="btn btn-ghost" onclick="navigate('lesson-view',{courseId:'${courseId}',lessonId:'${prev.id}'})">← ${prev.title}</button>` : '<div></div>'}
+            ${next
+              ? `<button class="btn btn-primary" onclick="navigate('lesson-view',{courseId:'${courseId}',lessonId:'${next.id}'})">Next: ${next.title} →</button>`
+              : course.exam && allDone
+                ? `<button class="btn btn-primary" onclick="navigate('exam-view',{courseId:'${courseId}'})">Take Exam →</button>`
+                : `<span class="badge badge-green">✓ Course Complete</span>`}
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="card" style="padding:0;overflow:hidden">
+          <div style="padding:16px 18px;border-bottom:1.5px solid var(--gray-200)"><strong style="font-size:14px">Course Contents</strong></div>
+          <div class="lesson-list" style="border:none;border-radius:0">
+            ${course.lessons.map((l, i) => `
+              <div class="lesson-item ${l.id === lesson.id ? 'active' : ''}" onclick="navigate('lesson-view',{courseId:'${courseId}',lessonId:'${l.id}'})">
+                <div class="lesson-num">${enrollment && enrollment.completedLessons.includes(l.id) ? '✓' : i+1}</div>
+                <div class="lesson-item-info">
+                  <div class="lesson-item-title">${l.title}</div>
+                  <div class="lesson-item-type">${l.type==='video'?'🎬 Video':'📄 Text'}</div>
+                </div>
+              </div>`).join('')}
+            ${course.exam ? `
+              <div class="lesson-item" onclick="${allDone ? `navigate('exam-view',{courseId:'${courseId}'})` : ''}">
+                <div class="lesson-num" style="background:var(--orange);color:white">✍</div>
+                <div class="lesson-item-info">
+                  <div class="lesson-item-title">${course.exam.title}</div>
+                  <div class="lesson-item-type">${allDone ? 'Ready to take' : 'Complete all lessons first'}</div>
+                </div>
+              </div>` : ''}
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function formatContent(text) {
+  if (!text) return '<p class="text-gray">No content provided.</p>';
+  return text.split('\n').map(line => {
+    if (line.startsWith('```') || line.endsWith('```')) return '';
+    if (line.trim() === '') return '<br>';
+    return `<p style="margin-bottom:10px">${line
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/`(.*?)`/g, '<code style="background:#f5f5f5;padding:2px 6px;border-radius:3px;font-family:monospace">$1</code>')
+    }</p>`;
+  }).join('');
 }
 
 /* ═══════════════════════════════════════════════
    PAGE: EXAM VIEW (Student)
 ═══════════════════════════════════════════════ */
-let examAnswers = {};
+let examAnswers   = {};
 let examSubmitted = false;
 
 function renderExamView({ courseId }) {
-  const course = DB.get('courses').find(c => c.id === courseId);
+  const course  = DB.get('courses').find(c => c.id === courseId);
   if (!course || !course.exam) { navigate('my-courses'); return; }
-
   const existing = DB.get('exam_results').find(r => r.studentId === currentUser.id && r.courseId === courseId);
   if (existing) { showExamResult(course, existing); return; }
 
-  examAnswers = {};
+  examAnswers   = {};
   examSubmitted = false;
   document.getElementById('topbar-title').textContent = 'Exam';
-  document.getElementById('topbar-actions').innerHTML = `<button class="btn btn-ghost btn-sm" onclick="navigate('course-detail',{courseId:'${courseId}'})">← Back to Course</button>`;
+  document.getElementById('topbar-actions').innerHTML = `<button class="btn btn-ghost btn-sm" onclick="navigate('course-detail',{courseId:'${courseId}'})">← Back</button>`;
 
   const exam = course.exam;
   document.getElementById('page-content').innerHTML = `
@@ -1348,83 +1784,59 @@ function renderExamView({ courseId }) {
       <div id="exam-questions">
         ${exam.questions.map((q, qi) => `
           <div class="question-card" id="qcard-${qi}">
-            <div class="question-num">Question ${qi + 1} of ${exam.questions.length}</div>
+            <div class="question-num">Question ${qi+1} of ${exam.questions.length}</div>
             <div class="question-text">${q.text || '(No question text)'}</div>
-            ${q.type === 'mcq' ? `
-              <div class="option-list">
-                ${q.options.map((opt, oi) => `
-                  <div class="option-item" id="opt-${qi}-${oi}" onclick="selectOption(${qi}, ${oi}, '${courseId}')">
-                    <div class="option-radio" id="radio-${qi}-${oi}"></div>
-                    <span>${opt}</span>
-                  </div>
-                `).join('')}
-              </div>` : `
-              <textarea class="open-answer" placeholder="Type your answer here..." oninput="updateOpenAnswer(${qi}, this.value, '${courseId}')"></textarea>`}
-          </div>
-        `).join('')}
+            ${q.type === 'mcq' ? `<div class="option-list">${q.options.map((opt, oi) => `
+              <div class="option-item" id="opt-${qi}-${oi}" onclick="selectOption(${qi},${oi},'${courseId}')">
+                <div class="option-radio" id="radio-${qi}-${oi}"></div>
+                <span>${opt}</span>
+              </div>`).join('')}</div>`
+            : `<textarea class="open-answer" placeholder="Type your answer here..." oninput="updateOpenAnswer(${qi},this.value,'${courseId}')"></textarea>`}
+          </div>`).join('')}
       </div>
       <div style="text-align:center;padding:20px 0">
         <button class="btn btn-primary btn-lg" onclick="submitExam('${courseId}')">Submit Exam →</button>
-        <p class="text-sm text-gray mt-2">Make sure you've answered all questions before submitting.</p>
+        <p class="text-sm text-gray mt-2">Answer all questions before submitting.</p>
       </div>
     </div>`;
 }
 
 function selectOption(qi, oi, courseId) {
   const exam = DB.get('courses').find(c => c.id === courseId).exam;
-  const q = exam.questions[qi];
-  // deselect all
-  q.options.forEach((_, i) => {
+  exam.questions[qi].options.forEach((_, i) => {
     const el = document.getElementById(`opt-${qi}-${i}`);
     if (el) el.classList.remove('selected');
   });
-  const selected = document.getElementById(`opt-${qi}-${oi}`);
-  if (selected) selected.classList.add('selected');
+  const sel = document.getElementById(`opt-${qi}-${oi}`);
+  if (sel) sel.classList.add('selected');
   examAnswers[qi] = oi;
   updateExamProgress(exam.questions.length);
 }
-
 function updateOpenAnswer(qi, val, courseId) {
   examAnswers[qi] = val;
   const exam = DB.get('courses').find(c => c.id === courseId).exam;
   updateExamProgress(exam.questions.length);
 }
-
 function updateExamProgress(total) {
-  const answered = Object.keys(examAnswers).length;
   const el = document.getElementById('exam-progress-val');
-  if (el) el.textContent = answered;
+  if (el) el.textContent = Object.keys(examAnswers).length;
 }
-
 function submitExam(courseId) {
   const course = DB.get('courses').find(c => c.id === courseId);
-  const exam = course.exam;
-  const mcqQuestions = exam.questions.filter(q => q.type === 'mcq');
-  if (mcqQuestions.length > 0) {
-    const unansweredMCQ = mcqQuestions.filter((q, qi) => examAnswers[exam.questions.indexOf(q)] === undefined);
-    if (unansweredMCQ.length > 0) {
-      showToast('⚠️ Please answer all multiple choice questions');
-      return;
-    }
-  }
+  const exam   = course.exam;
+  const mcqQs  = exam.questions.filter(q => q.type === 'mcq');
+  const unanswered = mcqQs.filter(q => examAnswers[exam.questions.indexOf(q)] === undefined);
+  if (unanswered.length > 0) { showToast('⚠️ Answer all multiple choice questions'); return; }
 
   let correct = 0;
-  exam.questions.forEach((q, qi) => {
-    if (q.type === 'mcq' && examAnswers[qi] === q.correct) correct++;
-  });
+  exam.questions.forEach((q, qi) => { if (q.type === 'mcq' && examAnswers[qi] === q.correct) correct++; });
+  const mcqCount = mcqQs.length;
+  const score    = mcqCount > 0 ? Math.round((correct / mcqCount) * 100) : 100;
 
-  const mcqCount = mcqQuestions.length;
-  const score = mcqCount > 0 ? Math.round((correct / mcqCount) * 100) : 100;
-
-  const result = {
-    id: uid(), studentId: currentUser.id, courseId,
-    score, correct, total: mcqCount,
-    answers: examAnswers, submittedAt: Date.now()
-  };
+  const result = { id: uid(), studentId: currentUser.id, courseId, score, correct, total: mcqCount, answers: examAnswers, submittedAt: Date.now() };
   const results = DB.get('exam_results');
   results.push(result);
   DB.set('exam_results', results);
-
   showExamResult(course, result);
 }
 
@@ -1445,35 +1857,30 @@ function showExamResult(course, result) {
           <button class="btn btn-primary" onclick="navigate('my-courses')">My Courses</button>
         </div>
       </div>
-
-      ${course.exam.questions.length > 0 ? `
       <div style="margin-top:28px">
         <div class="section-title" style="margin-bottom:16px">Review</div>
         ${course.exam.questions.map((q, qi) => {
-          const userAns = result.answers[qi];
-          const isCorrect = q.type === 'mcq' ? userAns === q.correct : null;
+          const userAns  = result.answers[qi];
           return `<div class="question-card">
             <div class="question-num">Q${qi+1} — ${q.type === 'mcq' ? 'Multiple Choice' : 'Open Answer'}</div>
             <div class="question-text">${q.text}</div>
-            ${q.type === 'mcq' ? `<div class="option-list">
-              ${q.options.map((opt, oi) => {
-                let cls = '';
-                if (oi === q.correct) cls = 'correct';
-                else if (oi === userAns && userAns !== q.correct) cls = 'wrong';
-                return `<div class="option-item ${cls}" style="cursor:default">
-                  <div class="option-radio" ${oi === userAns ? 'style="border-color:var(--orange);background:var(--orange)"' : ''}></div>
-                  <span>${opt}</span>
-                  ${oi === q.correct ? ' <span style="margin-left:auto;color:#25a244;font-size:13px;font-weight:600">✓ Correct</span>' : ''}
-                </div>`;
-              }).join('')}
-            </div>` : `
-            <div style="background:var(--gray-100);border-radius:6px;padding:12px;font-size:14px;color:var(--gray-600)">
+            ${q.type === 'mcq' ? `<div class="option-list">${q.options.map((opt, oi) => {
+              let cls = '';
+              if (oi === q.correct) cls = 'correct';
+              else if (oi === userAns && userAns !== q.correct) cls = 'wrong';
+              return `<div class="option-item ${cls}" style="cursor:default">
+                <div class="option-radio" ${oi === userAns ? 'style="border-color:var(--orange);background:var(--orange)"' : ''}></div>
+                <span>${opt}</span>
+                ${oi === q.correct ? `<span style="margin-left:auto;color:#25a244;font-size:13px;font-weight:600">✓ Correct</span>` : ''}
+              </div>`;
+            }).join('')}</div>` :
+            `<div style="background:var(--gray-100);border-radius:6px;padding:12px;font-size:14px;color:var(--gray-600)">
               <strong style="color:var(--black)">Your answer:</strong><br>${userAns || '<em>No answer provided</em>'}
               <br><span class="badge badge-gray" style="margin-top:8px">Reviewed by instructor</span>
             </div>`}
           </div>`;
         }).join('')}
-      </div>` : ''}
+      </div>
     </div>`;
 }
 
